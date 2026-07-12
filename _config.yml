@@ -1,0 +1,118 @@
+# ════════════════════════════════════════════════════════════
+#  Site configuration
+# ════════════════════════════════════════════════════════════
+
+title: My Blog
+tagline: A quiet place for words and memories.
+description: >-
+  A personal blog template built with Jekyll.
+  About, experience, travels, bookshelf, writing, and recipes.
+
+# For project sites, set baseurl to "/your-repo-name".
+# For user/org sites (user.github.io), set to "".
+baseurl: ""
+url: ""
+
+author:
+  name: Your Name
+  email: you@example.com
+  github: ""
+  twitter: ""
+  instagram: ""
+
+lang: en
+
+# Palette: paper | mist | sand | sage | ink | dusk
+#   paper -- warm cream background (default)
+#   mist  -- cool light gray
+#   sand  -- warm beige, like aged manuscript paper
+#   sage  -- muted green-tinted, calm and botanical
+#   ink   -- dark mode, deep charcoal
+#   dusk  -- dark blue-gray, cool and contemplative
+palette: paper
+
+# ════════════════════════════════════════════════════════════
+#  Build settings
+# ════════════════════════════════════════════════════════════
+
+theme: null
+
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  auto_ids: true
+
+permalink: /writing/:title/
+
+# All collections live under content/ for a clean root.
+collections_dir: content
+
+plugins:
+  - jekyll-feed
+
+# Custom collections.
+# Most use output: false -- content is rendered inline on their
+# listing pages, not as standalone URLs.
+collections:
+  about:
+    output: false
+  experience:
+    output: false
+  travels:
+    output: false
+  books:
+    output: false
+  writing:
+    output: false
+  recipes:
+    output: false
+
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "page"
+      lang: en
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      lang: en
+      section: writing
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - README.md
+  - LICENSE
+  - "*.gemspec"
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - vendor/
+
+sass:
+  style: compressed
+  sass_dir: _sass
+
+# ════════════════════════════════════════════════════════════
+#  Navigation -- read by _includes/nav.html.
+#  Each accent must be one of: sakura / sora / matcha / yuzu / sumire.
+# ════════════════════════════════════════════════════════════
+
+logo: /assets/favicon.svg
+
+nav:
+  - { key: "about",      label: "About",      path: "/about/",      accent: "sakura"  }
+  - { key: "experience", label: "Experience", path: "/experience/", accent: "sora"    }
+  - { key: "travels",    label: "Travels",    path: "/travels/",    accent: "matcha"  }
+  - { key: "bookshelf",  label: "Bookshelf",  path: "/bookshelf/",  accent: "yuzu"    }
+  - { key: "recipes",    label: "Recipes",    path: "/recipes/",    accent: "sakura"  }
+  - { key: "writing",    label: "Writing",    path: "/writing/",    accent: "sumire"  }
+  - { key: "message",    label: "Guestbook",  path: "/message/",    accent: "matcha"  }
+  - { key: "friends",    label: "Friends",    path: "/friends/",    accent: "sora"    }

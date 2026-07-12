@@ -1,0 +1,238 @@
+@use "variables" as *;
+
+/* === World map SVG === */
+
+/* === Travel page loading overlay === */
+.travel-page-loading {
+  position: fixed;
+  z-index: 40;
+  inset: 64px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FAF6F0;
+  opacity: 1;
+  transition: opacity 0.35s ease;
+}
+.travel-page-loading--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.travel-page-loading__inner {
+  text-align: center;
+  color: var(--muted, #999);
+  font-size: 0.9rem;
+}
+.travel-page-loading__spinner {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 12px;
+  border: 3px solid var(--border, #E0DAD0);
+  border-top-color: var(--sakura-ink, #A06B6B);
+  border-radius: 50%;
+  animation: travel-spin 0.7s linear infinite;
+}
+@keyframes travel-spin {
+  to { transform: rotate(360deg); }
+}
+.travel-worldmap__country {
+  fill: #E8E0D5;
+  stroke: rgba($sakura-ink, 0.13);
+  stroke-width: 0.45;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  transition: fill 0.2s $ease;
+}
+.travel-worldmap__country--visited {
+  fill: $sakura;
+  &:hover { fill: #D07889; }
+}
+.travel-worldmap__marker {
+  fill: rgba(#8F969C, 0.5);
+  stroke: rgba(#737A80, 0.46);
+  stroke-width: 0.9;
+  vector-effect: non-scaling-stroke;
+  cursor: help;
+  filter: drop-shadow(0 0.7px 1px rgba(#53585D, 0.1));
+}
+.travel-worldmap__marker--visited {
+  fill: #9170B5;
+  stroke: #654D80;
+  cursor: pointer;
+  &:hover { fill: #79589D; }
+}
+
+/* === Map viewport === */
+.travel-map-viewport {
+  flex: 2;
+  align-self: center;
+  overflow: hidden;
+  cursor: grab;
+  position: relative;
+  border-radius: $radius-md;
+  background: #FFFFFF;
+  min-height: 280px;
+  user-select: none;
+  @media (max-width: 640px) {
+    flex: none;
+    min-height: 200px;
+    border-radius: 0;
+  }
+  @media (max-width: 420px) {
+    min-height: 160px;
+  }
+}
+.travel-map-canvas {
+  transform-origin: 0 0;
+  & svg { display: block; }
+}
+.travel-map-reset {
+  position: absolute;
+  top: $space-3;
+  right: $space-3;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+ border: 1px solid rgba($sakura-ink, 0.18);
+ border-radius: 50%;
+ background: color-mix(in srgb, var(--surface) 92%, transparent);
+ color: $sakura-ink;
+  font: 600 22px/1 $font-sans;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: opacity 0.2s $ease, background 0.2s $ease;
+
+  &:hover { background: var(--surface); }
+  &[hidden] { display: none; }
+}
+
+.travel-map-reset--bubble {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1;
+  border-color: rgba($sakura-ink, 0.24);
+  transition: transform 0.18s $ease-soft, border-color 0.18s $ease,
+              background 0.18s $ease, color 0.18s $ease, box-shadow 0.18s $ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: rgba($sakura-ink, 0.42);
+    background: $sakura-soft;
+    color: $sakura-ink;
+    box-shadow: var(--shadow-md);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+/* === Left/right layout === */
+.travel-map-layout {
+  display: flex;
+  gap: $space-4;
+  @media (max-width: 640px) {
+    gap: $space-3;
+  }
+  align-items: stretch;
+  @media (max-width: 640px) { flex-direction: column; }
+}
+
+/* === Bubble cloud === */
+.travel-bubble-cloud {
+  position: relative;
+  flex: 1;
+  flex-shrink: 0;
+  min-width: 180px;
+  @media (max-width: 640px) {
+    flex: none;
+    min-width: 0;
+    min-height: 220px;
+    border-radius: 0;
+  }
+  overflow: hidden;
+  cursor: grab;
+  border-radius: $radius-md;
+  background: #FFFFFF;
+  user-select: none;
+}
+.travel-bubble-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+}
+.travel-bubble {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+
+  padding: 4px;
+
+  border-radius: 50%;
+  text-align: center;
+  background: $sakura-soft;
+  color: $sakura-ink;
+  font-family: $font-sans;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.15s $ease-soft, background 0.2s $ease;
+  &:hover {
+    background: $sakura;
+    color: var(--surface);
+    z-index: 10;
+  }
+}
+.travel-bubble__label {
+  display: block;
+  width: 80%;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* === Map loading indicator === */
+.travel-map-hint {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $fs-sm;
+  color: var(--muted);
+  text-align: center;
+  padding: $space-5;
+}
+
+/* === Country hover info === */
+.travel-map-tooltip {
+  position: fixed;
+  z-index: 1200;
+  max-width: min(320px, calc(100vw - 24px));
+  display: grid;
+  gap: 4px;
+  padding: $space-2 $space-3;
+ border: 1px solid rgba($sakura-ink, 0.18);
+ border-radius: $radius-md;
+ background: color-mix(in srgb, var(--surface) 50%, transparent);
+ box-shadow: var(--shadow-md);
+  backdrop-filter: blur(10px);
+  pointer-events: none;
+  color: var(--ink-soft);
+  font-size: $fs-xs;
+  line-height: $lh-snug;
+
+  &[hidden] { display: none; }
+  strong {
+    color: $sakura-ink;
+    font-size: $fs-sm;
+  }
+  &--unvisited strong {
+    color: var(--muted);
+  }
+}

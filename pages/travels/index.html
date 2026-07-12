@@ -1,0 +1,57 @@
+---
+layout: default
+title: Travels
+section: travels
+accent: matcha
+eyebrow: Travels
+permalink: /travels/
+---
+{% include loading.html %}
+
+<header class="listing-header">
+  <div class="container">
+    <p class="listing-header__eyebrow">Travels</p>
+    <h1 class="listing-header__title">Places visited</h1>
+    <p class="listing-header__desc">Cities and memories from the road.</p>
+    <div class="listing-header__actions">
+      <button type="button" class="listing-header__action" id="travel-summary-btn">Trip summary &rarr;</button>
+    </div>
+  </div>
+</header>
+
+<div class="travel-map-container" id="travel-map-container">
+  <p class="travel-map-container__label">Countries and regions visited</p>
+  <div class="travel-map-loading">Loading map...</div>
+</div>
+
+{% include search-bar.html
+   prefix="travel"
+   accent="matcha"
+   scopes="country city body"
+   labels="Country|City|Body"
+   placeholder="Search by city, country, attraction..."
+   unit="cities" %}
+
+<div class="travel-grid" id="travel-grid"
+     data-card-grid data-mode="row" data-prefix="travel" data-collapsed-lines="3"
+     aria-live="polite">
+  <p class="listing-loading">Loading...</p>
+</div>
+
+<template id="travel-source" hidden>
+  {% for item in site.travels %}
+    {% if item.slug == "notebook" %}{{ item.content | markdownify }}{% endif %}
+  {% endfor %}
+</template>
+
+<template id="travel-summary-source" hidden>
+  {% for item in site.travels %}
+    {% if item.slug == "summary" %}{{ item.content | markdownify }}{% endif %}
+  {% endfor %}
+</template>
+
+<script src="{{ '/assets/js/search.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/cards.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/travels.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/travels-map.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/travels-summary.js' | relative_url }}" defer></script>

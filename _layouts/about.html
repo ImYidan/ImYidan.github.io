@@ -1,0 +1,62 @@
+---
+layout: default
+---
+{% assign about_doc = site.about | first %}
+{% if about_doc %}{% assign about_content = about_doc.content | markdownify %}{% else %}{% assign about_content = content %}{% endif %}
+
+{% assign intro_split = about_content | split: '<h1 id="contact">Contact</h1>' %}
+{% assign about_intro = intro_split[0] | strip %}
+{% assign contact_rest = intro_split[1] | default: '' %}
+{% assign contact_split = contact_rest | split: '<h1 id="qa">Q&A</h1>' %}
+{% assign about_contact = contact_split[0] | strip %}
+{% assign about_qa = contact_split[1] | default: '' | strip %}
+
+{% assign intro_heading = page.lead | default: page.title %}
+{% assign intro_h2_parts = about_intro | split: '<h2' %}
+{% if intro_h2_parts.size > 1 %}
+  {% assign first_h2_frag = intro_h2_parts[1] | split: '</h2>' | first %}
+  {% assign intro_heading = first_h2_frag | split: '>' | last | strip %}
+{% endif %}
+
+<section class="about">
+  <div class="about-hero">
+    <aside class="about__side">
+      <div class="about__avatar" aria-hidden="true">{{ page.initial | default: '?' }}</div>
+      <div class="about__note">
+        <span>{{ site.author.name }}</span>
+        <p>{{ site.tagline }}</p>
+      </div>
+    </aside>
+    <div class="about__intro">
+      <p class="page__eyebrow">{{ page.eyebrow | default: 'About' }}</p>
+      <h1 class="about__lead">{{ intro_heading }}</h1>
+      {% if about_intro != '' %}<div class="about__bio prose">{{ about_intro }}</div>{% endif %}
+    </div>
+  </div>
+
+  {% if about_qa != '' %}
+    {% assign qa_items = about_qa | split: '<h2' %}
+    <section class="about-qa">
+      <div class="about-qa__header">
+        <p class="about-qa__kicker">Q&A</p>
+        <h2>Frequently Asked</h2>
+      </div>
+      <div class="about-qa__grid">
+        {% for item in qa_items %}
+          {% assign block = item | strip %}
+          {% if block != '' %}
+            {% assign parts = block | split: '</h2>' %}
+            {% assign question = parts[0] | split: '>' | last | strip %}
+            {% assign answer = parts[1] | strip %}
+            {% assign color_idx = forloop.index0 | modulo: 5 %}
+            {% assign colors = "sakura,sora,matcha,yuzu,sumire" | split: "," %}
+            <article class="about-qa__item about-qa__item--{{ colors[color_idx] }}">
+              <h3>{{ question }}</h3>
+              <div class="about-qa__answer">{{ answer }}</div>
+            </article>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+</section>

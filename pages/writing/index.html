@@ -1,0 +1,29 @@
+---
+layout: default
+title: Writing
+section: writing
+accent: sumire
+eyebrow: Writing
+permalink: /writing/
+---
+
+<header class="listing-header">
+  <div class="container">
+    <p class="listing-header__eyebrow">Writing</p>
+    <h1 class="listing-header__title">Things written down</h1>
+    <p class="listing-header__desc">Short pieces and notes, written in spare moments.</p>
+  </div>
+</header>
+
+{% assign writing_notebook = site.writing | where: "slug", "notebook" | first %}
+{% if writing_notebook %}
+  <div class="writing-notebook prose">
+    {{ writing_notebook.content | markdownify }}
+  </div>
+  <script src="{{ '/assets/js/writing.js' | relative_url }}" defer></script>
+{% else %}
+  <div class="empty-state">
+    <div class="empty-state__icon">&#8709;</div>
+    <p>Nothing here yet.</p>
+  </div>
+{% endif %}

@@ -1,0 +1,44 @@
+---
+layout: default
+---
+<section class="hero">
+  <div class="container">
+    <p class="hero__eyebrow">{{ page.hero_eyebrow | default: 'Hello, welcome' }}</p>
+    <h1 class="hero__title">{{ page.hero_title | default: site.title }}</h1>
+    <p class="hero__lead">{{ page.hero_lead | default: site.tagline }}</p>
+    {% if page.hero_links %}
+      <div class="hero__links">
+        {% for link in page.hero_links %}
+          <a class="hero__link hero__link--{{ link.accent | default: 'sakura' }}"
+             href="{{ link.path | relative_url }}">{{ link.label }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section-cards">
+  <div class="container">
+    <div class="section-cards__grid">
+      {% for item in site.nav %}
+        {% case item.key %}
+          {% when 'about' %}{% assign card_desc = 'A short introduction' %}
+          {% when 'experience' %}{% assign card_desc = 'Work, study, and projects' %}
+          {% when 'travels' %}{% assign card_desc = 'Cities visited and memories made' %}
+          {% when 'bookshelf' %}{% assign card_desc = 'Books read, with short notes' %}
+          {% when 'writing' %}{% assign card_desc = 'Articles, notes, and reflections' %}
+          {% when 'recipes' %}{% assign card_desc = 'Recipes tried and tested' %}
+          {% when 'message' %}{% assign card_desc = 'Leave a message for the host' %}
+          {% when 'friends' %}{% assign card_desc = 'Friends across the web' %}
+          {% else %}{% assign card_desc = '' %}
+        {% endcase %}
+        <a href="{{ item.path | relative_url }}" class="section-card section-card--{{ item.accent }}">
+          <span class="section-card__mark" aria-hidden="true"></span>
+          <span class="section-card__title">{{ item.label }}</span>
+          <span class="section-card__desc">{{ card_desc }}</span>
+          <span class="section-card__arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>

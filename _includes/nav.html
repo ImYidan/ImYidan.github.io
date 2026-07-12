@@ -1,0 +1,26 @@
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="site-header__brand" href="{{ '/' | relative_url }}">
+      <span class="site-header__brand-mark" aria-hidden="true"></span>
+      <span class="site-header__brand-text">{{ site.title }}</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Primary navigation">
+      <button class="site-nav__toggle" aria-expanded="false" aria-controls="site-nav__list">
+        <span class="sr-only">Menu</span>
+        <span class="site-nav__toggle-bars"></span>
+      </button>
+
+      <ul class="site-nav__list" id="site-nav__list">
+        {% for item in site.nav %}
+          <li class="site-nav__item site-nav__item--{{ item.accent }}">
+            <a href="{{ item.path | relative_url }}"
+               class="site-nav__link{% if page.url == item.path or page.section == item.key %} site-nav__link--active{% endif %}">
+              {{ item.label }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </div>
+</header>

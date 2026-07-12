@@ -1,0 +1,172 @@
+---
+# Jekyll compiles this to /assets/css/main.css
+---
+
+@use "variables" as *;
+@use "base";
+@use "layout";
+@use "components";
+@use "search";
+@use "cards";
+@use "bubble";
+@use "travel_summary";
+@use "message";
+@use "friends";
+
+:root {
+  --bg:         #{$cream};
+  --surface:    #{$surface};
+  --surface-2:  #{$surface-2};
+  --line:       #{$line};
+  --line-soft:  #{$line-soft};
+  --ink:        #{$ink};
+  --ink-soft:   #{$ink-soft};
+  --muted:      #{$muted};
+
+  --shadow-xs: #{$shadow-xs};
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
+
+  --sakura:      #{$sakura};
+  --sakura-soft: #{$sakura-soft};
+  --sakura-ink:  #{$sakura-ink};
+  --sora:        #{$sora};
+  --sora-soft:   #{$sora-soft};
+  --sora-ink:    #{$sora-ink};
+  --matcha:      #{$matcha};
+  --matcha-soft: #{$matcha-soft};
+  --matcha-ink:  #{$matcha-ink};
+  --yuzu:        #{$yuzu};
+  --yuzu-soft:   #{$yuzu-soft};
+  --yuzu-ink:    #{$yuzu-ink};
+  --sumire:      #{$sumire};
+  --sumire-soft: #{$sumire-soft};
+  --sumire-ink:  #{$sumire-ink};
+
+  --accent:       #{$sakura};
+  --accent-soft:  #{$sakura-soft};
+
+  --font-serif: #{$font-serif};
+  --font-sans:  #{$font-sans};
+  --font-mono:  #{$font-mono};
+}
+
+// ── Palettes ────────────────────────────────────────────────
+//   Switch via _config.yml:  palette: paper | mist | sand | sage | ink | dusk
+//   Applied as data-palette="xxx" on <body> (see _layouts/default.html)
+//   Each palette overrides the structural variables defined in :root.
+//   Accent colors (sakura/sora/matcha/yuzu/sumire) are shared across all.
+//
+//   paper  -- warm cream (the :root default above)
+//   mist   -- cool light gray, crisp and modern
+//   sand   -- warm beige, like aged manuscript paper
+//   sage   -- muted green-tinted, calm and botanical
+//   ink    -- dark mode, deep charcoal with warm undertones
+//   dusk   -- dark blue-gray, cool and contemplative
+// ────────────────────────────────────────────────────────────
+
+// Mist -- cool light gray, crisp and modern
+[data-palette="mist"] {
+  --bg:         #F2F3F5;
+  --surface:    #FFFFFF;
+  --surface-2:  #E7E9ED;
+  --line:       #D5D9DF;
+  --line-soft:  #E2E5EA;
+  --ink:        #2A2D34;
+  --ink-soft:   #525861;
+  --muted:      #8E949E;
+  --shadow-xs:  0 1px 2px rgba(26, 32, 44, 0.04);
+  --shadow-sm:  0 1px 3px rgba(26, 32, 44, 0.05), 0 1px 2px rgba(26, 32, 44, 0.03);
+  --shadow-md:  0 4px 12px rgba(26, 32, 44, 0.06);
+  --shadow-lg:  0 10px 28px rgba(26, 32, 44, 0.09);
+}
+
+// Sand -- warm beige, like aged manuscript paper
+[data-palette="sand"] {
+  --bg:         #F5EFE3;
+  --surface:    #FBF7EF;
+  --surface-2:  #EFE6D4;
+  --line:       #E0D4BE;
+  --line-soft:  #EBE2D0;
+  --ink:        #3D3527;
+  --ink-soft:   #6B5F49;
+  --muted:      #A3967E;
+  --shadow-xs:  0 1px 2px rgba(80, 60, 30, 0.05);
+  --shadow-sm:  0 1px 3px rgba(80, 60, 30, 0.06), 0 1px 2px rgba(80, 60, 30, 0.04);
+  --shadow-md:  0 4px 12px rgba(80, 60, 30, 0.08);
+  --shadow-lg:  0 10px 28px rgba(80, 60, 30, 0.10);
+}
+
+// Sage -- muted green-tinted, calm and botanical
+[data-palette="sage"] {
+  --bg:         #F0F2EC;
+  --surface:    #FBFCF9;
+  --surface-2:  #E5E9DE;
+  --line:       #D2D9C6;
+  --line-soft:  #E0E5D6;
+  --ink:        #2C3326;
+  --ink-soft:   #56604A;
+  --muted:      #8E9880;
+  --shadow-xs:  0 1px 2px rgba(40, 50, 30, 0.05);
+  --shadow-sm:  0 1px 3px rgba(40, 50, 30, 0.06), 0 1px 2px rgba(40, 50, 30, 0.04);
+  --shadow-md:  0 4px 12px rgba(40, 50, 30, 0.08);
+  --shadow-lg:  0 10px 28px rgba(40, 50, 30, 0.10);
+}
+
+// Ink -- dark mode, deep charcoal with warm undertones
+[data-palette="ink"] {
+  --bg:         #1B1A1F;
+  --surface:    #26252C;
+  --surface-2:  #302F37;
+  --line:       #3C3A44;
+  --line-soft:  #312F39;
+  --ink:        #E8E5E1;
+  --ink-soft:   #ACA8A3;
+  --muted:      #767278;
+  --shadow-xs:  0 1px 2px rgba(0, 0, 0, 0.16);
+  --shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.22), 0 1px 2px rgba(0, 0, 0, 0.16);
+  --shadow-md:  0 4px 12px rgba(0, 0, 0, 0.30);
+  --shadow-lg:  0 10px 28px rgba(0, 0, 0, 0.40);
+}
+
+// Dusk -- dark blue-gray, cool and contemplative
+[data-palette="dusk"] {
+  --bg:         #1A1D24;
+  --surface:    #242832;
+  --surface-2:  #2E333F;
+  --line:       #3A4150;
+  --line-soft:  #303644;
+  --ink:        #DDE2EA;
+  --ink-soft:   #A2AAB6;
+  --muted:      #6E7682;
+  --shadow-xs:  0 1px 2px rgba(0, 0, 0, 0.20);
+  --shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.28), 0 1px 2px rgba(0, 0, 0, 0.20);
+  --shadow-md:  0 4px 12px rgba(0, 0, 0, 0.36);
+  --shadow-lg:  0 10px 28px rgba(0, 0, 0, 0.46);
+}
+
+body.page--about      { --accent: var(--sakura);  --accent-soft: var(--sakura-soft); }
+body.page--experience { --accent: var(--sora);    --accent-soft: var(--sora-soft); }
+body.page--travels    { --accent: var(--matcha);  --accent-soft: var(--matcha-soft); }
+body.page--bookshelf  { --accent: var(--yuzu);    --accent-soft: var(--yuzu-soft); }
+body.page--writing    { --accent: var(--sumire);  --accent-soft: var(--sumire-soft); }
+body.page--recipes    { --accent: var(--sakura);  --accent-soft: var(--sakura-soft); }
+body.page--message    { --accent: var(--matcha);  --accent-soft: var(--matcha-soft); }
+body.page--friends    { --accent: var(--sora);    --accent-soft: var(--sora-soft); }
+
+// Reusable page loading overlay
+.page-loading {
+  position: fixed; z-index: 40; inset: 64px 0 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg); opacity: 1;
+  transition: opacity 0.35s ease;
+}
+.page-loading--hidden { opacity: 0; pointer-events: none; }
+.page-loading__inner { text-align: center; color: var(--muted); font-size: 0.9rem; }
+.page-loading__spinner {
+  width: 32px; height: 32px; margin: 0 auto 12px;
+  border: 3px solid var(--line); border-top-color: var(--accent, #{$sakura});
+  border-radius: 50%; animation: page-spin 0.7s linear infinite;
+}
+@keyframes page-spin { to { transform: rotate(360deg); } }

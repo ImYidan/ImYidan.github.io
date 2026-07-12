@@ -1,0 +1,41 @@
+---
+layout: default
+title: Friends
+section: friends
+accent: sora
+permalink: /friends/
+description: Friends scattered across the web.
+---
+
+<header class="listing-header friends-header">
+  <div class="container">
+    <p class="listing-header__eyebrow">Friends</p>
+    <h1 class="listing-header__title">Connected across the web</h1>
+    <p class="listing-header__desc">Tap a bubble to visit their world.</p>
+  </div>
+</header>
+
+{% assign friends = site.data.friends | default: empty %}
+{% if friends.size > 0 %}
+  <section class="friend-network" id="friend-network" aria-label="Friend network">
+    <svg class="friend-network__lines" id="friend-network-lines" aria-hidden="true"></svg>
+    <button class="friend-bubble friend-bubble--self" type="button" aria-label="Your location">
+      <span>{{ site.author.name | default: site.title }}</span>
+    </button>
+    {% for friend in friends %}
+      <button class="friend-bubble friend-bubble--person" type="button"
+              data-index="{{ forloop.index0 }}"
+              {% if friend.url %}data-url="{{ friend.url | escape }}"{% endif %}
+              aria-label="{{ friend.name | escape }}">{% if friend.name %}{{ friend.name }}{% else %}Friend{% endif %}</button>
+    {% endfor %}
+  </section>
+  <p class="friend-network__hint">Clicking a bubble may open an external site</p>
+  <div class="friend-toast" id="friend-toast" role="status" aria-live="polite" hidden>Site under construction</div>
+{% else %}
+  <section class="friends-empty" aria-live="polite">
+    <span aria-hidden="true">&#9675;</span>
+    <p>Under construction</p>
+  </section>
+{% endif %}
+
+<script src="{{ '/assets/js/friends.js' | relative_url }}" defer></script>
