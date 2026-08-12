@@ -8,17 +8,15 @@ description: Friends scattered across the web.
 ---
 
 <header class="listing-header friends-header">
-  <div class="container">
     <p class="listing-header__eyebrow">Friends</p>
     <h1 class="listing-header__title">Connected across the web</h1>
     <p class="listing-header__desc">Tap a bubble to visit their world.</p>
-  </div>
 </header>
 
 {% assign friends = site.data.friends | default: empty %}
 {% if friends.size > 0 %}
   <section class="friend-network" id="friend-network" aria-label="Friend network">
-    <svg class="friend-network__lines" id="friend-network-lines" aria-hidden="true"></svg>
+    <canvas class="friend-network__canvas" id="friend-network-canvas" aria-hidden="true"></canvas>
     <button class="friend-bubble friend-bubble--self" type="button" aria-label="Your location">
       <span>{{ site.author.name | default: site.title }}</span>
     </button>
@@ -38,4 +36,4 @@ description: Friends scattered across the web.
   </section>
 {% endif %}
 
-<script src="{{ '/assets/js/friends.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/friends.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M%S' }}" defer></script>

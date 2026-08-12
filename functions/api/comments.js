@@ -25,13 +25,15 @@ async function hashIp(ip, salt = "") {
 
 export async function onRequestGet(context) {
   try {
-    const result = await context.env.blog_message
+    const db = context.env.BLOG_DB || context.env.blog_message;
+    const result = await db
       .prepare(`
         SELECT
           id,
           name,
           content,
           parent_id,
+          likes,
           CASE WHEN public_contact = TRUE THEN contact ELSE NULL END AS contact,
           created_at
         FROM comments
@@ -79,8 +81,9 @@ export async function onRequestPost(context) {
   const city = cleanText(context.request.cf?.city, 100) || null;
 
   try {
+    const db = context.env.BLOG_DB || context.env.blog_message;
     if (parentId !== null) {
-      const parent = await context.env.blog_message
+      const parent = await db
         .prepare("SELECT id FROM comments WHERE id = ? AND status = 'approved' AND parent_id IS NULL")
         .bind(parentId)
         .first();
@@ -90,7 +93,7 @@ export async function onRequestPost(context) {
       }
     }
 
-    const result = await context.env.blog_message
+    const result = await db
       .prepare(`
         INSERT INTO comments (
           name, content, contact, public_contact, ip_hash, country, city, parent_id, status

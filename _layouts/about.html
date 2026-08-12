@@ -7,15 +7,20 @@ layout: default
 {% assign intro_split = about_content | split: '<h1 id="contact">Contact</h1>' %}
 {% assign about_intro = intro_split[0] | strip %}
 {% assign contact_rest = intro_split[1] | default: '' %}
-{% assign contact_split = contact_rest | split: '<h1 id="qa">Q&A</h1>' %}
+{% assign contact_split = contact_rest | split: '<h1 id="qa">' %}
 {% assign about_contact = contact_split[0] | strip %}
-{% assign about_qa = contact_split[1] | default: '' | strip %}
+{% assign qa_heading_and_rest = contact_split[1] | default: '' %}
+{% assign qa_heading_split = qa_heading_and_rest | split: '</h1>' %}
+{% assign qa_and_rest = qa_heading_split[1] | default: '' %}
+{% assign about_qa = qa_and_rest | strip %}
 
 {% assign intro_heading = page.lead | default: page.title %}
 {% assign intro_h2_parts = about_intro | split: '<h2' %}
 {% if intro_h2_parts.size > 1 %}
   {% assign first_h2_frag = intro_h2_parts[1] | split: '</h2>' | first %}
   {% assign intro_heading = first_h2_frag | split: '>' | last | strip %}
+  {% assign first_intro_h2 = '<h2' | append: first_h2_frag | append: '</h2>' %}
+  {% assign about_intro = about_intro | remove_first: first_intro_h2 | strip %}
 {% endif %}
 
 <section class="about">
@@ -34,6 +39,14 @@ layout: default
     </div>
   </div>
 
+  <div class="about__sections">
+  {% if about_contact != '' %}
+    <section class="about-contact" aria-labelledby="about-contact-title">
+      <h2 id="about-contact-title">Contact</h2>
+      <div class="about-contact__body">{{ about_contact }}</div>
+    </section>
+  {% endif %}
+
   {% if about_qa != '' %}
     {% assign qa_items = about_qa | split: '<h2' %}
     <section class="about-qa">
@@ -48,9 +61,14 @@ layout: default
             {% assign parts = block | split: '</h2>' %}
             {% assign question = parts[0] | split: '>' | last | strip %}
             {% assign answer = parts[1] | strip %}
-            {% assign color_idx = forloop.index0 | modulo: 5 %}
+            {% assign question_len = question | size %}
+            {% assign answer_len = answer | strip_html | size %}
+            {% assign span_idx = question_len | plus: answer_len | plus: forloop.index0 | modulo: 5 %}
+            {% case span_idx %}{% when 0 %}{% assign card_span = 5 %}{% when 1 %}{% assign card_span = 7 %}{% when 2 %}{% assign card_span = 4 %}{% when 3 %}{% assign card_span = 6 %}{% else %}{% assign card_span = 3 %}{% endcase %}
+            {% if question_len > 18 and card_span < 6 %}{% assign card_span = 6 %}{% elsif question_len > 13 and card_span < 5 %}{% assign card_span = 5 %}{% endif %}
+            {% assign color_idx = question_len | plus: answer_len | modulo: 5 %}
             {% assign colors = "sakura,sora,matcha,yuzu,sumire" | split: "," %}
-            <article class="about-qa__item about-qa__item--{{ colors[color_idx] }}">
+            <article class="about-qa__item about-qa__item--span-{{ card_span }} about-qa__item--{{ colors[color_idx] }}">
               <h3>{{ question }}</h3>
               <div class="about-qa__answer">{{ answer }}</div>
             </article>
@@ -59,4 +77,19 @@ layout: default
       </div>
     </section>
   {% endif %}
+  {% if about_facts != '' %}
+    {% assign fact_items = about_facts | split: '<h2' %}
+    <section class="about-facts" aria-labelledby="about-facts-title">
+      <div class="about-qa__header"><p class="about-qa__kicker">Notes</p><h2 id="about-facts-title">Facts</h2></div>
+      <div class="about-facts__list">
+        {% assign fact_index = 0 %}{% for item in fact_items %}{% assign block = item | strip %}{% if block != '' %}
+          {% assign fact_index = fact_index | plus: 1 %}{% assign parts = block | split: '</h2>' %}
+          <article class="about-facts__item"><span class="about-facts__index">0{{ fact_index }}</span><h3>{{ parts[0] | split: '>' | last | strip }}</h3><div class="about-facts__answer">{{ parts[1] | strip }}</div></article>
+        {% endif %}{% endfor %}
+      </div>
+    </section>
+  {% endif %}
+  </div>
 </section>
+
+{% if site.features.home_stats %}{% include site-like.html %}{% endif %}

@@ -4,15 +4,15 @@ require "json"
 
 module ContentSources
   SOURCES = {
-    "about" => "content/_about/about.md",
-    "experience" => "content/_experience/experience.md"
+    "about" => "_about/about.md",
+    "experience" => "_experience/experience.md"
   }.freeze
 
   def self.load(site)
     sources = {}
 
     SOURCES.each do |key, relative_path|
-      path = site.in_source_dir(relative_path)
+      path = site.in_source_dir(site.config.fetch("collections_dir", "content"), relative_path)
       next unless File.file?(path)
 
       sources[key] = strip_front_matter(File.read(path, encoding: "UTF-8"))
@@ -32,7 +32,7 @@ module ContentSources
   end
 
   def self.load_friends(site)
-    directory = site.in_source_dir("content/_friends")
+    directory = site.in_source_dir(site.config.fetch("collections_dir", "content"), "_friends")
     return [] unless Dir.exist?(directory)
 
     Dir.glob(File.join(directory, "*"))
@@ -83,11 +83,24 @@ end
 Jekyll::Hooks.register :site, :post_read do |site|
   sources = ContentSources.load(site)
   site.data["friends"] = ContentSources.load_friends(site)
-  data_dir = site.in_source_dir("_data")
-  FileUtils.mkdir_p(data_dir) unless Dir.exist?(data_dir)
-  File.write(
-    File.join(data_dir, "experience_content.json"),
-    JSON.generate({"content" => sources["experience"]}),
-    encoding: "UTF-8"
-  )
+  site.data["experience_content"] = {"content" => sources["experience"]}
+
+  content_root = site.config.fetch("collections_dir", "content")
+  writing_path = site.in_source_dir(content_root, "_writing/notebook.md")
+  if File.file?(writing_path)
+    site.data["writing_notebook"] = {
+      "content" => ContentSources.strip_front_matter(File.read(writing_path, encoding: "UTF-8"))
+    }
+  end
+
+  if site.config["data_source"] == "sample"
+    {
+      "story_sample" => "stories.json",
+      "engagement_sample" => "stats.json",
+      "guestbook_sample" => "comments.json"
+    }.each do |key, filename|
+      path = site.in_source_dir("sample_data", filename)
+      site.data[key] = JSON.parse(File.read(path, encoding: "UTF-8")) if File.file?(path)
+    end
+  end
 end

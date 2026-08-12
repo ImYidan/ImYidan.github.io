@@ -4,7 +4,7 @@ layout: default
 <section class="hero">
   <div class="container">
     <p class="hero__eyebrow">{{ page.hero_eyebrow | default: 'Hello, welcome' }}</p>
-    <h1 class="hero__title">{{ page.hero_title | default: site.title }}</h1>
+    <h1 class="hero__title"><span class="hero__title-prefix">This is</span> <span class="hero__title-name">{{ page.hero_title | default: site.title }}</span></h1>
     <p class="hero__lead">{{ page.hero_lead | default: site.tagline }}</p>
     {% if page.hero_links %}
       <div class="hero__links">
@@ -12,6 +12,7 @@ layout: default
           <a class="hero__link hero__link--{{ link.accent | default: 'sakura' }}"
              href="{{ link.path | relative_url }}">{{ link.label }}</a>
         {% endfor %}
+        <span class="home-stats__visits">Visited <span id="home-visit-count">?</span> times</span>
       </div>
     {% endif %}
   </div>
@@ -27,6 +28,7 @@ layout: default
           {% when 'travels' %}{% assign card_desc = 'Cities visited and memories made' %}
           {% when 'bookshelf' %}{% assign card_desc = 'Books read, with short notes' %}
           {% when 'writing' %}{% assign card_desc = 'Articles, notes, and reflections' %}
+          {% when 'posts' %}{% assign card_desc = 'Essays and recent field notes' %}
           {% when 'recipes' %}{% assign card_desc = 'Recipes tried and tested' %}
           {% when 'message' %}{% assign card_desc = 'Leave a message for the host' %}
           {% when 'friends' %}{% assign card_desc = 'Friends across the web' %}
@@ -42,3 +44,5 @@ layout: default
     </div>
   </div>
 </section>
+
+{% if site.features.home_stats %}{% include site-like.html %}{% endif %}

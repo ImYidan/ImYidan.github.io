@@ -3,8 +3,8 @@
 A minimalist personal blog template built with [Jekyll](https://jekyllrb.com).
 Soft anime-inspired palette, modular architecture, and ready to deploy.
 
-**Sections:** About, Experience, Travels (with world map), Bookshelf, Recipes,
-Writing, Guestbook (optional), Friends.
+**Sections:** About, Experience, Travels (map + rankings), Bookshelf, Recipes,
+Writing (personal works + collaborative story tree), Journal, Guestbook, Friends.
 
 Each section has its own accent color -- sakura pink, sora blue, matcha green,
 yuzu gold, sumire purple -- so the site feels cohesive yet varied.
@@ -18,6 +18,8 @@ yuzu gold, sumire purple -- so the site feels cohesive yet varied.
 - [Adding and editing content](#adding-and-editing-content)
 - [The listing page pattern](#the-listing-page-pattern)
 - [Reusable modules](#reusable-modules)
+- [Optional feature modules](#optional-feature-modules)
+- [Private content injection](#private-content-injection)
 - [Customization](#customization)
 - [Deployment](#deployment)
 - [License](#license)
@@ -46,6 +48,11 @@ bundle exec jekyll serve
 # Open http://127.0.0.1:4000
 ```
 
+The default `backend.mode: auto` detects the data source at build time. When
+`sample_data/` exists, all collections and interactive modules use the bundled
+sample. When it is absent, collections use `content/` and interactive modules
+use the Cloudflare API. Clear this site's browser storage to reset demo changes.
+
 ### Deploy without Ruby
 
 Push to GitHub and let [GitHub Pages](https://pages.github.com) or
@@ -69,6 +76,7 @@ See [Deployment](#deployment).
 |   |-- bookshelf/index.html Book listing (row-expand cards)
 |   |-- recipes/index.html   Recipe listing (row-expand cards)
 |   |-- writing/index.html   Short works with tabs
+|   |-- posts/index.html     Journal search and pinned posts
 |   |-- message/index.html   Guestbook (optional, needs backend)
 |   `-- friends/index.html   Friend-link bubble network
 |
@@ -127,11 +135,13 @@ See [Deployment](#deployment).
 |   `-- favicon.svg
 |
 |-- _plugins/
-|   `-- content_sources.rb   Loads about/experience/friends into site.data
+|   |-- content_sources.rb   Loads content into site.data without disk writes
+|   `-- post_frontmatter_validator.rb
 |
-`-- functions/               Serverless functions (optional: guestbook)
-    |-- api/comments.js      Comment API (Cloudflare Pages / Vercel)
-    `-- geo.js               Geocoding helper for travel map
+|-- migrations/              Cloudflare D1 schema and seed migration
+|-- sample_data/             Complete offline sample: content, stats, messages, stories
+|-- _scripts/                Private-content synchronization
+`-- functions/               Cloudflare Pages Functions
 ```
 
 ---
@@ -345,6 +355,133 @@ To disable the guestbook, delete `pages/message/` and remove the
 
 ---
 
+## Optional feature modules
+
+All newer features are controlled from `_config.yml`:
+
+```yaml
+features:
+  posts: true
+  home_stats: true
+  guestbook: true
+  guestbook_likes: true
+  story_tree: true
+  travel_rankings: true
+
+backend:
+  mode: auto          # auto, demo, or cloudflare
+  api_base: /api
+```
+
+`auto` resolves to `demo` when `sample_data/` exists and `cloudflare` when it
+does not. `demo` is suitable for screenshots, theme development, and static
+hosts. `cloudflare` uses the included Pages Functions and D1 database. Set the
+`BLOG_BACKEND_MODE` environment variable to override detection for one build.
+
+The two source trees have distinct roles:
+
+```text
+sample_data/content/   Bundled fictional content used by the sample site
+content/               Your real content, or the target for private-repo injection
+```
+
+The sample tree includes About, Experience, Journal posts, Bookshelf, Recipes,
+Travels, Travel Rankings, Writing, and Friends. `stats.json`, `comments.json`,
+and `stories.json` cover modules that normally depend on API data. Jekyll reads
+these files during a demo build but does not publish the raw `sample_data/`
+directory.
+
+### Journal
+
+`pages/posts/index.html`, `_includes/post-card.html`, and `assets/js/posts.js`
+form an independent journal module. Posts can use readable filenames because
+the build plugin validates the explicit date instead:
+
+```markdown
+---
+title: A readable title
+date: 2026-08-12
+tags: [essay, notes]
+pinned: false
+description: Card and social preview text.
+---
+```
+
+### Site engagement
+
+`_includes/site-engagement.html` can be included from any layout. In demo mode
+it starts with sample counts. In Cloudflare mode it uses `GET/POST /api/stats`.
+
+### Story garden
+
+The Writing page exposes a branching collaborative-story module. Readers can
+select any node, read its path from the root, continue that branch, create a
+new story, and like a story. Demo data lives in `sample_data/stories.json`.
+Cloudflare mode stores stories in `stories` and `story_nodes`; lightweight
+hourly action limits use `story_action_limits`.
+
+### Travel rankings
+
+Edit `content/_travels/rankings.md`. Every H1 creates a ranking tab, every H2
+creates a tier, and `=` marks tied items:
+
+```markdown
+# Favorite cities
+## S
+Kyoto = Lisbon
+## A
+Paris = Bologna
+```
+
+### Guestbook likes
+
+The existing guestbook now supports likes on both messages and replies. Demo
+mode persists them locally. Cloudflare mode calls `/api/like` and stores the
+counter in the `comments.likes` column.
+
+---
+
+## Private content injection
+
+The template can keep travel, writing, and recipe source material in separate
+private GitHub repositories. `_scripts/sync_private_content.rb` normalizes
+UTF-8/UTF-16 files and injects them before Jekyll builds.
+
+Each private repository may use this simple contract:
+
+```text
+travel-private/
+  notebook.md        # or travels.md; otherwise all Markdown is combined
+  summary.md         # optional
+  rankings.md        # optional
+
+writing-private/
+  notebook.md        # or writing.md
+  stories.json       # optional demo-story replacement
+
+recipes-private/
+  notebook.md        # or recipe.md / recipes.md
+```
+
+Test injection locally from the Template directory:
+
+```powershell
+$env:TRAVEL_DATA_DIR="D:\content\travel"
+$env:WRITING_DATA_DIR="D:\content\writing"
+$env:RECIPES_DATA_DIR="D:\content\recipes"
+$env:BLOG_BACKEND_MODE="cloudflare"
+ruby _scripts/sync_private_content.rb
+bundle exec jekyll build
+```
+
+Unset variables are deliberately skipped, so the bundled sample remains
+usable. `BLOG_BACKEND_MODE=cloudflare` makes this local build use the injected
+`content/` tree even while `sample_data/` remains checked in. Generated notebook
+files are normal Jekyll content; inspect the build diff before committing if
+the private material should never enter Git history.
+
+---
+
 ## Customization
 
 ### Colors
@@ -458,12 +595,89 @@ or `""` for user/org pages.
 
 ### Cloudflare Pages
 
-1. Connect your GitHub repo
-2. Build command: `bundle exec jekyll build`
-3. Build output: `_site`
-4. Add `functions/` for the optional guestbook API
+The complete Cloudflare route supports Pages Functions, D1, site statistics,
+guestbook likes, and collaborative stories.
 
-Set `url` in `_config.yml` to your custom domain.
+#### 1. Install and authenticate Wrangler
+
+```bash
+npm install --save-dev wrangler
+npx wrangler login
+```
+
+#### 2. Create the D1 database
+
+```bash
+npx wrangler d1 create blog-template-db
+```
+
+Copy the returned `database_id` into `wrangler.toml`. Keep the binding name
+`BLOG_DB`; every included Function reads that binding.
+
+Apply the schema and sample story:
+
+```bash
+npx wrangler d1 migrations apply blog-template-db --local
+npx wrangler d1 migrations apply blog-template-db --remote
+```
+
+Set a long random `IP_HASH_SALT` secret in the Cloudflare Pages project. It is
+used only to hash guestbook request addresses for abuse investigation.
+
+#### 3. Switch the site to the real backend
+
+```yaml
+# _config.yml
+backend:
+  mode: cloudflare
+  api_base: /api
+```
+
+Build and test Functions locally:
+
+```bash
+bundle exec jekyll build
+npx wrangler pages dev _site --d1 BLOG_DB=YOUR_DATABASE_ID
+```
+
+#### 4. Create and deploy the Pages project
+
+```bash
+npx wrangler pages project create blog-template
+npx wrangler pages deploy _site --project-name=blog-template
+```
+
+Set `url` in `_config.yml` to the generated Pages URL or custom domain.
+
+#### 5. Enable GitHub Actions and private repositories
+
+The included `.github/workflows/deploy-cloudflare.yml` checks out optional
+private content, runs the sync script, builds Jekyll, applies D1 migrations,
+and deploys Pages including `functions/`.
+
+Create these GitHub repository **Secrets**:
+
+| Secret | Purpose |
+|---|---|
+| `CLOUDFLARE_API_TOKEN` | Pages deploy and D1 edit token |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account identifier |
+| `PRIVATE_CONTENT_TOKEN` | Fine-grained GitHub token with read-only access to the private content repos |
+
+Create these GitHub repository **Variables**:
+
+| Variable | Example |
+|---|---|
+| `CLOUDFLARE_PAGES_PROJECT` | `blog-template` |
+| `PRIVATE_TRAVEL_REPO` | `your-name/private-travel` |
+| `PRIVATE_WRITING_REPO` | `your-name/private-writing` |
+| `PRIVATE_RECIPES_REPO` | `your-name/private-recipes` |
+
+Private repository variables may be left blank. The matching checkout and
+injection are then skipped. Use a fine-grained token scoped only to those
+repositories; do not use a broad classic token when read-only access is enough.
+
+The scheduled workflow refreshes injected content once per day. Remove the
+`schedule` block if deployments should happen only on pushes or manual runs.
 
 ### Any static host
 

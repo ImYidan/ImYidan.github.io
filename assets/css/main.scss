@@ -1,172 +1,151 @@
 ---
-# Jekyll compiles this to /assets/css/main.css
+# Jekyll 会把这个文件当作模板处理，编译为 /assets/css/main.css
 ---
 
+// ════════════════════════════════════════════════════════════
+//   main.scss —— 主入口
+//   导入所有 partial，并定义全局 CSS 自定义属性
+//   （由 Jekyll 的 Sass 编译器编译为 /assets/css/main.css）
+// ════════════════════════════════════════════════════════════
+
+// @use 必须在文件最顶部（Sass 规则），不能在任何 CSS 规则之后
 @use "variables" as *;
 @use "base";
 @use "layout";
 @use "components";
-@use "search";
-@use "cards";
 @use "bubble";
 @use "travel_summary";
+@use "travel_rankings";
 @use "message";
 @use "friends";
+@use "home_stats";
+@use "story_tree";
+@use "writing_cards";
+@use "story_tree_overrides";
 
+// —— 全局 CSS 自定义属性 ————————————————————————————————
+//  这些变量在运行时可被页面级 inline style 重写
+//  （例如关于我页面把 --accent 改为 sakura）
 :root {
-  --bg:         #{$cream};
+  --cream:      #{$cream};
   --surface:    #{$surface};
   --surface-2:  #{$surface-2};
   --line:       #{$line};
   --line-soft:  #{$line-soft};
+
   --ink:        #{$ink};
   --ink-soft:   #{$ink-soft};
   --muted:      #{$muted};
 
-  --shadow-xs: #{$shadow-xs};
-  --shadow-sm: #{$shadow-sm};
-  --shadow-md: #{$shadow-md};
-  --shadow-lg: #{$shadow-lg};
-
+  // —— 强调色板（每个 tab 复用一个）——
   --sakura:      #{$sakura};
   --sakura-soft: #{$sakura-soft};
   --sakura-ink:  #{$sakura-ink};
+
   --sora:        #{$sora};
   --sora-soft:   #{$sora-soft};
   --sora-ink:    #{$sora-ink};
+
   --matcha:      #{$matcha};
   --matcha-soft: #{$matcha-soft};
   --matcha-ink:  #{$matcha-ink};
+
   --yuzu:        #{$yuzu};
   --yuzu-soft:   #{$yuzu-soft};
   --yuzu-ink:    #{$yuzu-ink};
+
   --sumire:      #{$sumire};
   --sumire-soft: #{$sumire-soft};
   --sumire-ink:  #{$sumire-ink};
 
+  // —— 全站默认强调色（被页面级 inline 重写）——
   --accent:       #{$sakura};
   --accent-soft:  #{$sakura-soft};
 
+  // 字体
   --font-serif: #{$font-serif};
   --font-sans:  #{$font-sans};
   --font-mono:  #{$font-mono};
+
+  // 阴影
+  --shadow-xs: #{$shadow-xs};
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
 }
 
-// ── Palettes ────────────────────────────────────────────────
-//   Switch via _config.yml:  palette: paper | mist | sand | sage | ink | dusk
-//   Applied as data-palette="xxx" on <body> (see _layouts/default.html)
-//   Each palette overrides the structural variables defined in :root.
-//   Accent colors (sakura/sora/matcha/yuzu/sumire) are shared across all.
-//
-//   paper  -- warm cream (the :root default above)
-//   mist   -- cool light gray, crisp and modern
-//   sand   -- warm beige, like aged manuscript paper
-//   sage   -- muted green-tinted, calm and botanical
-//   ink    -- dark mode, deep charcoal with warm undertones
-//   dusk   -- dark blue-gray, cool and contemplative
-// ────────────────────────────────────────────────────────────
-
-// Mist -- cool light gray, crisp and modern
-[data-palette="mist"] {
-  --bg:         #F2F3F5;
+// ════════════════════════════════════════════════════════════
+//   主题：清冷 (Cool) —— 淡灰冷调，安静极简
+//   通过 [data-theme="cool"] 激活，覆盖中性色与阴影
+//   强调色也做了冷调适配：玫瑰 / 深蓝 / 青绿 / 暗金 / 长春花
+// ════════════════════════════════════════════════════════════
+[data-theme="cool"] {
+  --cream:      #F5F4F2;
   --surface:    #FFFFFF;
-  --surface-2:  #E7E9ED;
-  --line:       #D5D9DF;
-  --line-soft:  #E2E5EA;
-  --ink:        #2A2D34;
-  --ink-soft:   #525861;
-  --muted:      #8E949E;
-  --shadow-xs:  0 1px 2px rgba(26, 32, 44, 0.04);
-  --shadow-sm:  0 1px 3px rgba(26, 32, 44, 0.05), 0 1px 2px rgba(26, 32, 44, 0.03);
-  --shadow-md:  0 4px 12px rgba(26, 32, 44, 0.06);
-  --shadow-lg:  0 10px 28px rgba(26, 32, 44, 0.09);
+  --surface-2:  #F0EFEC;
+  --line:       #E4E2DF;
+  --line-soft:  #EFEDEA;
+
+  --ink:        #2C2B2D;
+  --ink-soft:   #58555A;
+  --muted:      #948F96;
+
+  --shadow-xs: 0 1px 2px rgba(44, 43, 44, 0.04);
+  --shadow-sm: 0 1px 3px rgba(44, 43, 44, 0.05), 0 1px 2px rgba(44, 43, 44, 0.03);
+  --shadow-md: 0 4px 12px rgba(44, 43, 44, 0.06);
+  --shadow-lg: 0 10px 28px rgba(44, 43, 44, 0.08);
+
+  // —— cool-tuned accent palette ——
+  --sakura:      #DB7B96;
+  --sakura-soft: #F2DBE4;
+  --sakura-ink:  #9B4560;
+
+  --sora:        #6BA3D0;
+  --sora-soft:   #D4E6F4;
+  --sora-ink:    #28587E;
+
+  --matcha:      #75B5A0;
+  --matcha-soft: #D6EAE3;
+  --matcha-ink:  #356859;
+
+  --yuzu:        #D2A050;
+  --yuzu-soft:   #F0E2CC;
+  --yuzu-ink:    #7A5C1C;
+
+  --sumire:      #9489C8;
+  --sumire-soft: #E1DDF0;
+  --sumire-ink:  #4F457F;
 }
 
-// Sand -- warm beige, like aged manuscript paper
-[data-palette="sand"] {
-  --bg:         #F5EFE3;
-  --surface:    #FBF7EF;
-  --surface-2:  #EFE6D4;
-  --line:       #E0D4BE;
-  --line-soft:  #EBE2D0;
-  --ink:        #3D3527;
-  --ink-soft:   #6B5F49;
-  --muted:      #A3967E;
-  --shadow-xs:  0 1px 2px rgba(80, 60, 30, 0.05);
-  --shadow-sm:  0 1px 3px rgba(80, 60, 30, 0.06), 0 1px 2px rgba(80, 60, 30, 0.04);
-  --shadow-md:  0 4px 12px rgba(80, 60, 30, 0.08);
-  --shadow-lg:  0 10px 28px rgba(80, 60, 30, 0.10);
+// 章节级强调色映射 —— 让每个 body.page--<section> 自动设置 --accent
+// Dark second scheme, tuned to the charcoal / warm-paper contrast of cheng.st.
+[data-theme="cool"] {
+  color-scheme: dark;
+  --cream: #1A1A1A;
+  --surface: #242424;
+  --surface-2: #2B2B2B;
+  --line: #3A3A3A;
+  --line-soft: #303030;
+  --ink: #F1E3CE;
+  --ink-soft: #D2D2D2;
+  --muted: #949494;
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.28), 0 1px 2px rgba(0, 0, 0, 0.18);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.30);
+  --shadow-lg: 0 10px 28px rgba(0, 0, 0, 0.36);
+  --sakura: #D94F73; --sakura-soft: #46202C; --sakura-ink: #F08AA5;
+  --sora: #3F8FC4; --sora-soft: #183346; --sora-ink: #7FC2ED;
+  --matcha: #4E9F7F; --matcha-soft: #18382E; --matcha-ink: #7BD0AE;
+  --yuzu: #C58A2A; --yuzu-soft: #3B2A12; --yuzu-ink: #E6B85E;
+  --sumire: #7B68B5; --sumire-soft: #29213F; --sumire-ink: #B6A1E4;
 }
 
-// Sage -- muted green-tinted, calm and botanical
-[data-palette="sage"] {
-  --bg:         #F0F2EC;
-  --surface:    #FBFCF9;
-  --surface-2:  #E5E9DE;
-  --line:       #D2D9C6;
-  --line-soft:  #E0E5D6;
-  --ink:        #2C3326;
-  --ink-soft:   #56604A;
-  --muted:      #8E9880;
-  --shadow-xs:  0 1px 2px rgba(40, 50, 30, 0.05);
-  --shadow-sm:  0 1px 3px rgba(40, 50, 30, 0.06), 0 1px 2px rgba(40, 50, 30, 0.04);
-  --shadow-md:  0 4px 12px rgba(40, 50, 30, 0.08);
-  --shadow-lg:  0 10px 28px rgba(40, 50, 30, 0.10);
-}
-
-// Ink -- dark mode, deep charcoal with warm undertones
-[data-palette="ink"] {
-  --bg:         #1B1A1F;
-  --surface:    #26252C;
-  --surface-2:  #302F37;
-  --line:       #3C3A44;
-  --line-soft:  #312F39;
-  --ink:        #E8E5E1;
-  --ink-soft:   #ACA8A3;
-  --muted:      #767278;
-  --shadow-xs:  0 1px 2px rgba(0, 0, 0, 0.16);
-  --shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.22), 0 1px 2px rgba(0, 0, 0, 0.16);
-  --shadow-md:  0 4px 12px rgba(0, 0, 0, 0.30);
-  --shadow-lg:  0 10px 28px rgba(0, 0, 0, 0.40);
-}
-
-// Dusk -- dark blue-gray, cool and contemplative
-[data-palette="dusk"] {
-  --bg:         #1A1D24;
-  --surface:    #242832;
-  --surface-2:  #2E333F;
-  --line:       #3A4150;
-  --line-soft:  #303644;
-  --ink:        #DDE2EA;
-  --ink-soft:   #A2AAB6;
-  --muted:      #6E7682;
-  --shadow-xs:  0 1px 2px rgba(0, 0, 0, 0.20);
-  --shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.28), 0 1px 2px rgba(0, 0, 0, 0.20);
-  --shadow-md:  0 4px 12px rgba(0, 0, 0, 0.36);
-  --shadow-lg:  0 10px 28px rgba(0, 0, 0, 0.46);
-}
-
-body.page--about      { --accent: var(--sakura);  --accent-soft: var(--sakura-soft); }
-body.page--experience { --accent: var(--sora);    --accent-soft: var(--sora-soft); }
-body.page--travels    { --accent: var(--matcha);  --accent-soft: var(--matcha-soft); }
-body.page--bookshelf  { --accent: var(--yuzu);    --accent-soft: var(--yuzu-soft); }
-body.page--writing    { --accent: var(--sumire);  --accent-soft: var(--sumire-soft); }
-body.page--recipes    { --accent: var(--sakura);  --accent-soft: var(--sakura-soft); }
-body.page--message    { --accent: var(--matcha);  --accent-soft: var(--matcha-soft); }
-body.page--friends    { --accent: var(--sora);    --accent-soft: var(--sora-soft); }
-
-// Reusable page loading overlay
-.page-loading {
-  position: fixed; z-index: 40; inset: 64px 0 0;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--bg); opacity: 1;
-  transition: opacity 0.35s ease;
-}
-.page-loading--hidden { opacity: 0; pointer-events: none; }
-.page-loading__inner { text-align: center; color: var(--muted); font-size: 0.9rem; }
-.page-loading__spinner {
-  width: 32px; height: 32px; margin: 0 auto 12px;
-  border: 3px solid var(--line); border-top-color: var(--accent, #{$sakura});
-  border-radius: 50%; animation: page-spin 0.7s linear infinite;
-}
-@keyframes page-spin { to { transform: rotate(360deg); } }
+body.page--about      { --accent: var(--sakura);  --accent-soft: var(--sakura-soft);  }
+body.page--experience { --accent: var(--sora);    --accent-soft: var(--sora-soft);    }
+body.page--travels    { --accent: var(--sakura);  --accent-soft: var(--sakura-soft);  }
+body.page--bookshelf  { --accent: var(--yuzu);    --accent-soft: var(--yuzu-soft);    }
+body.page--writing    { --accent: var(--sora);    --accent-soft: var(--sora-soft);    }
+body.page--posts      { --accent: var(--sumire);  --accent-soft: var(--sumire-soft);  }
+body.page--recipes    { --accent: var(--sakura);  --accent-soft: var(--sakura-soft);  }
+body.page--message    { --accent: var(--matcha);   --accent-soft: var(--matcha-soft);   }
+body.page--friends    { --accent: var(--sora);     --accent-soft: var(--sora-soft);     }

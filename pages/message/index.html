@@ -8,14 +8,12 @@ description: Leave a message, or see what others have written.
 ---
 
 <header class="listing-header message-header">
-  <div class="container">
     <p class="listing-header__eyebrow">Guestbook</p>
     <h1 class="listing-header__title">Leave a message here</h1>
     <p class="listing-header__desc">Leave your memories here.</p>
-  </div>
 </header>
 
-<div class="message-layout">
+<div class="message-layout" data-guestbook-likes="{{ site.features.guestbook_likes }}">
   <form class="message-form" id="message-form" novalidate>
     <div class="message-form__row">
       <label class="message-field">
@@ -51,9 +49,9 @@ description: Leave a message, or see what others have written.
       <button class="message-submit" type="submit">Send message</button>
     </div>
   </form>
-  <section class="message-list-section">
+  <section class="message-list-section" aria-labelledby="message-list-title">
     <div class="message-list__heading">
-      <h2>Messages</h2>
+      <h2 id="message-list-title">Messages</h2>
       <span id="message-count" aria-live="polite"></span>
     </div>
     <div class="message-list" id="message-list" aria-live="polite" aria-busy="true">
@@ -62,4 +60,5 @@ description: Leave a message, or see what others have written.
   </section>
 </div>
 
-<script src="{{ '/assets/js/message.js' | relative_url }}" defer></script>
+{% if site.data.guestbook_sample %}<script type="application/json" id="guestbook-sample">{{ site.data.guestbook_sample | jsonify }}</script>{% endif %}
+<script src="{{ '/assets/js/message.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M%S' }}" defer></script>

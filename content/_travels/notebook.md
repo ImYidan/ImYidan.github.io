@@ -3,6 +3,8 @@ title: notebook
 section: travels
 ---
 
+<div data-travel-continent="Europe" hidden></div>
+
 # France
 
 ## Paris (5d)
@@ -15,6 +17,8 @@ We walked for hours, got lost near the river, and found a small cafe that served
 
 Quieter than expected. The old town glowed at dusk, and the food lived up to every cliche.
 
+<div data-travel-continent="Asia" hidden></div>
+
 # Japan
 
 ## Tokyo (7d)
@@ -26,6 +30,8 @@ The trains were exact. The convenience stores were better than they had any righ
 ## Kyoto (3d)
 
 Slower than Tokyo. Temples in the morning, tea in the afternoon, and a quiet walk along the river at night.
+
+<div data-travel-continent="Europe" hidden></div>
 
 # Italy
 

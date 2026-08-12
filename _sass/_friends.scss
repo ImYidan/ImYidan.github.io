@@ -9,97 +9,75 @@
   background: transparent;
 }
 
-.friend-network__lines {
+.friend-network__canvas {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
 
-  line {
-    stroke: rgba($sora-ink, 0.2);
-    stroke-width: 1.2;
-    stroke-dasharray: 4 7;
-  }
 }
 
 .friend-bubble {
-  --bubble-color: #{$sora};
-  --bubble-soft: #{$sora-soft};
-  --bubble-ink: #{$sora-ink};
+  --bubble-color: #{var(--sora)};
+  --bubble-soft: #{var(--sora-soft)};
+  --bubble-ink: #{var(--sora-ink)};
   position: absolute;
   z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   width: clamp(76px, 11vw, 112px);
   aspect-ratio: 1;
   padding: $space-2;
   transform: translate(-50%, -50%);
-  border: 1px solid color-mix(in srgb, var(--bubble-ink) 18%, transparent);
+  border: 0;
   border-radius: 50%;
-  background: var(--bubble-soft);
-  color: var(--bubble-ink);
+  background: transparent;
+  color: transparent;
   font-family: $font-sans;
   font-size: $fs-base;
   font-weight: 500;
   line-height: $lh-snug;
   text-align: center;
-  box-shadow: 0 5px 18px rgba($sora-ink, 0.1);
+  box-shadow: none;
   cursor: pointer;
-  scale: 1;
-  transition: background $dur-base $ease, color $dur-base $ease,
-              box-shadow $dur-base $ease, scale $dur-base $ease-soft;
+  transition: none;
 
   &:hover,
   &:focus-visible {
-    scale: 1.075;
-    z-index: 2;
-    background: var(--bubble-color);
-    color: var(--surface);
-    box-shadow: var(--shadow-lg);
     outline: none;
   }
 }
 
 .friend-bubble--person {
-  will-change: transform;
+  will-change: left, top;
+}
+
+.friend-bubble[hidden] {
+  display: none;
 }
 
 .friend-bubble--sora {
-  --bubble-color: #{$sora}; --bubble-soft: #{$sora-soft}; --bubble-ink: #{$sora-ink};
+  --bubble-color: #{var(--sora)}; --bubble-soft: #{var(--sora-soft)}; --bubble-ink: #{var(--sora-ink)};
 }
 .friend-bubble--matcha {
-  --bubble-color: #{$matcha}; --bubble-soft: #{$matcha-soft}; --bubble-ink: #{$matcha-ink};
+  --bubble-color: #{var(--matcha)}; --bubble-soft: #{var(--matcha-soft)}; --bubble-ink: #{var(--matcha-ink)};
 }
 .friend-bubble--yuzu {
-  --bubble-color: #{$yuzu}; --bubble-soft: #{$yuzu-soft}; --bubble-ink: #{$yuzu-ink};
+  --bubble-color: #{var(--yuzu)}; --bubble-soft: #{var(--yuzu-soft)}; --bubble-ink: #{var(--yuzu-ink)};
 }
 .friend-bubble--sumire {
-  --bubble-color: #{$sumire}; --bubble-soft: #{$sumire-soft}; --bubble-ink: #{$sumire-ink};
+  --bubble-color: #{var(--sumire)}; --bubble-soft: #{var(--sumire-soft)}; --bubble-ink: #{var(--sumire-ink)};
 }
 
 
 .friend-bubble--self {
-  --bubble-color: #{$sakura};
-  --bubble-soft: #{$sakura-soft};
-  --bubble-ink: #{$sakura-ink};
-  z-index: 3;
+  --bubble-color: #{var(--sakura)};
+  --bubble-soft: #{var(--sakura-soft)};
+  --bubble-ink: #{var(--sakura-ink)};
+  z-index: 20;
   width: clamp(96px, 14vw, 138px);
-  flex-direction: column;
-  gap: 2px;
-  border-color: rgba($sakura-ink, 0.28);
-  background: $sakura-soft;
-  color: $sakura-ink;
   cursor: pointer;
-  will-change: transform;
-
-  &:hover {
-    scale: 1.035;
-    background: $sakura;
-    color: var(--surface);
-    box-shadow: var(--shadow-md);
-  }
+  will-change: left, top;
 }
 
 .friend-network__hint {
@@ -117,10 +95,10 @@
   max-width: calc(100vw - 2rem);
   padding: $space-3 $space-5;
   transform: translateY(6px);
-  border: 1px solid color-mix(in srgb, var(--hint-accent, #{$sora}) 52%, transparent);
+  border: 1px solid color-mix(in srgb, var(--hint-accent, #{var(--sora)}) 52%, transparent);
   border-radius: $radius-pill;
-  background: color-mix(in srgb, var(--hint-soft, #{$sora-soft}) 92%, white);
-  color: var(--hint-ink, #{$sora-ink});
+  background: color-mix(in srgb, var(--hint-soft, #{var(--sora-soft)}) 92%, white);
+  color: var(--hint-ink, #{var(--sora-ink)});
   box-shadow: var(--shadow-lg);
   opacity: 0;
   transition: opacity $dur-base $ease, transform $dur-base $ease;
@@ -136,12 +114,24 @@
   color: var(--muted);
   text-align: center;
 
-  span { color: $sora; font-size: 3rem; }
+  span { color: var(--sora); font-size: 3rem; }
   p { margin: 0; font-family: $font-serif; font-size: $fs-xl; }
 }
 
 @media (max-width: 560px) {
-  .friend-network { height: 470px; }
-  .friend-bubble { width: 72px; font-size: $fs-sm; }
-  .friend-bubble--self { width: 92px; }
+  .friend-network {
+    height: 430px;
+
+    &--switching .friend-bubble--person {
+      pointer-events: none;
+    }
+  }
+  .friend-bubble {
+    width: 72px;
+    font-size: $fs-sm;
+  }
+  .friend-bubble--self {
+    width: 96px;
+    touch-action: manipulation;
+  }
 }

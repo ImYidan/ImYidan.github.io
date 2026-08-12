@@ -2,23 +2,31 @@
   <div class="container site-footer__inner">
     <div class="site-footer__col">
       <p class="site-footer__title">{{ site.title }}</p>
-      <p class="site-footer__text">{{ site.tagline }}</p>
+      {% assign footer_about = site.about | first %}
+      {% if footer_about %}
+        {% assign footer_about_html = footer_about.content | markdownify %}
+        {% assign footer_contact = footer_about_html | split: '<h1 id="contact">Contact</h1>' | last | split: '<h1 id="qa">Q&A</h1>' | first | strip %}
+        {% if footer_contact != '' %}<div class="site-footer__contact">{{ footer_contact }}</div>{% endif %}
+      {% else %}
+        <p class="site-footer__text">{{ site.tagline }}</p>
+      {% endif %}
     </div>
 
     <nav class="site-footer__nav" aria-label="Footer navigation">
       {% for item in site.nav %}
         <a href="{{ item.path | relative_url }}">{{ item.label }}</a>
       {% endfor %}
+      <a href="{{ '/feed.xml' | relative_url }}" type="application/atom+xml">RSS</a>
     </nav>
 
     <div class="site-footer__meta">
       <p>
         {% assign year = site.time | date: '%Y' %}
-        &copy; {{ year }} {{ site.author.name }} .
-        <a href="{{ '/feed.xml' | relative_url }}">RSS</a>
+        &copy; {{ year }} {{ site.author.name }}
+        {% if site.author.github %} . <a href="https://github.com/{{ site.author.github }}" target="_blank" rel="noopener noreferrer">GitHub</a>{% endif %}
       </p>
       <p class="site-footer__built">
-        Powered by <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a>
+        Powered by <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> . Hosted on <a href="https://pages.cloudflare.com" target="_blank" rel="noopener">Cloudflare Pages</a>
       </p>
     </div>
   </div>

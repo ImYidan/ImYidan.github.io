@@ -1,9 +1,8 @@
-// ─────────────────────────────────────────────────────────────
-//   travels-summary.js -- Travel summary modal (self-contained)
-//   Binds #travel-summary-btn, parses #travel-summary-source,
-//   builds a modal with vertical tabs. Does not depend on
-//   internal variables from travels.js.
-// ─────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════
+//   travels-summary.js —— 旅途汇总弹窗（自包含）
+//   绑定 #travel-summary-btn，解析 #travel-summary-source，
+//   构建带竖排标签栏的模态弹窗。不依赖 travels.js 的内部变量。
+// ════════════════════════════════════════════════════════════
 
 (function () {
   "use strict";
@@ -11,19 +10,18 @@
   var SUMMARY_BTN = document.getElementById("travel-summary-btn");
   var SUMMARY_SOURCE_EL = document.getElementById("travel-summary-source");
 
-  // Enhance "record" entries (e.g. "Rome Florence 7 & Pat Lee")
-  // into styled rows with city chips, day count, and companions.
+  // 把"记录"类条目（形如 "罗马 佛罗伦萨7 & 张菲 郑思涵"）增强为样式行
   function enhanceSummaryEntries(sectionEl) {
     sectionEl.querySelectorAll("h2").forEach(function (h) { h.classList.add("travel-summary__year"); });
     sectionEl.querySelectorAll("p").forEach(function (p) {
       var raw = (p.textContent || "").trim();
       if (!raw) return;
-      var m = raw.match(/^(.+?)(\d+)\s*[&]\s*(.+)$/);
-      if (!m) return; // non-entry paragraphs stay as-is
+      var m = raw.match(/^(.+?)(\d+)\s*[&＆]\s*(.+)$/);
+      if (!m) return; // 非条目段落保持原样
       var cities = m[1].trim().split(/\s+/).filter(Boolean);
       var days = m[2];
       var peopleRaw = m[3].trim();
-      var solo = /^(none|solo|none|[-\u2014])$/i.test(peopleRaw);
+      var solo = /^(none|无|独行|—|-)$/i.test(peopleRaw);
 
       var entry = document.createElement("div");
       entry.className = "travel-summary__entry";
@@ -40,12 +38,12 @@
       meta.className = "travel-summary__entry-meta";
       var daysEl = document.createElement("span");
       daysEl.className = "travel-summary__days";
-      daysEl.textContent = days + " days";
+      daysEl.textContent = days + " 天";
       meta.appendChild(daysEl);
       if (solo) {
         var soloEl = document.createElement("span");
         soloEl.className = "travel-summary__people travel-summary__people--solo";
-        soloEl.textContent = "Solo";
+        soloEl.textContent = "独行";
         meta.appendChild(soloEl);
       } else {
         peopleRaw.split(/\s+/).filter(Boolean).forEach(function (name) {
@@ -72,12 +70,12 @@
 
       var total = document.createElement("p");
       total.className = "travel-summary__year-total";
-      total.textContent = totalDays + " days total";
+      total.textContent = "全年共 " + totalDays + " 天";
       sectionEl.insertBefore(total, node);
     });
   }
 
-  // Make year sections collapsible (collapsed by default)
+  // -- \u5c06\u5e74\u4efd\u533a\u57df\u8f6c\u4e3a\u53ef\u6298\u53e0\u7ed3\u6784\uff08\u9ed8\u8ba4\u6536\u8d77\uff09----------------------------------
   function makeYearsCollapsible(sectionEl) {
     sectionEl.querySelectorAll("h2.travel-summary__year").forEach(function (h2) {
       var entries = [];
@@ -109,7 +107,7 @@
 
       var totalSpan = document.createElement("span");
       totalSpan.className = "travel-summary__year-total";
-      totalSpan.textContent = totalDays + " days total";
+      totalSpan.textContent = "全年共 " + totalDays + " 天";
 
       var arrow = document.createElement("span");
       arrow.className = "travel-summary__year-arrow";
@@ -201,7 +199,7 @@
 
 
     if (!continentSections.length) {
-      continentSections.push({ title: "Europe", el: introEl });
+      continentSections.push({ title: "欧洲", el: introEl });
       introEl = document.createElement("div");
     }
 
@@ -209,12 +207,12 @@
       enhanceSummaryEntries(s.el);
       s.hasData = !!s.el.querySelector(".travel-summary__entry");
       if (!s.hasData) {
-        s.el.innerHTML = '<p class="travel-summary__empty">No data yet</p>';
+        s.el.innerHTML = '<p class="travel-summary__empty">暂无数据</p>';
       }
     });
 
 
-    // Build All section from collected entries
+    // Build 全球 section from collected entries
     var allYearsEl = document.createElement("div");
     var yearKeys = Object.keys(allEntriesByYear).sort(function (a, b) { return Number(b) - Number(a); });
     yearKeys.forEach(function (year) {
@@ -230,7 +228,7 @@
     enhanceSummaryEntries(allYearsEl);
 
     var allYearsSection = {
-      title: "All",
+      title: "全球",
       el: allYearsEl,
       hasData: yearKeys.length > 0
     };
@@ -248,7 +246,7 @@
     var closeBtn = document.createElement("button");
     closeBtn.className = "travel-modal__close";
     closeBtn.type = "button";
-    closeBtn.setAttribute("aria-label", "Close");
+    closeBtn.setAttribute("aria-label", "关闭");
     closeBtn.innerHTML = "&times;";
     closeBtn.addEventListener("click", closeSummaryModal);
 
@@ -256,7 +254,7 @@
     head.className = "travel-summary__head";
     var titleEl = document.createElement("h2");
     titleEl.className = "travel-modal__title";
-    titleEl.textContent = "Travel Summary";
+    titleEl.textContent = "旅途汇总";
     head.appendChild(titleEl);
 
     var bodyWrap = document.createElement("div");
@@ -275,12 +273,17 @@
       if (introHtml) {
         var heading = document.createElement("h4");
         heading.className = "travel-summary__intro-title";
-        heading.textContent = "Introduction";
+        heading.textContent = "写在前面";
         content.appendChild(heading);
         var introDiv = document.createElement("div");
         introDiv.className = "travel-summary__intro";
-        if (section.title === "All") {
-          introDiv.textContent = "A summary of all travel destinations, days spent, and companions.";
+        if (section.title === "全球") {
+          var globalLines = [
+            "这里汇总了其他所有记录中已有的旅行目的地，天数，与同行人。",
+            "本人由衷地致谢所有同行的小伙伴们，兹以此名录致最好的你们。",
+            "我们的目标是——星辰大海！"
+          ];
+          introDiv.innerHTML = globalLines.map(function (l) { return "<p>" + l + "</p>"; }).join("");
         } else {
           introDiv.innerHTML = introHtml;
         }
@@ -301,6 +304,11 @@
       tab.disabled = !s.hasData;
       if (s.hasData) {
         tab.addEventListener("click", function () { activateTab(s, tab); });
+      }
+      if (tabs.children.length > 0) {
+        var divider = document.createElement("div");
+        divider.className = "travel-summary__tab-divider";
+        tabs.appendChild(divider);
       }
       tabs.appendChild(tab);
       if (i === 0 && s.hasData) activateTab(s, tab);

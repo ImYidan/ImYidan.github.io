@@ -44,7 +44,22 @@ kramdown:
   syntax_highlighter: rouge
   auto_ids: true
 
-permalink: /writing/:title/
+permalink: /posts/:title/
+
+# Optional modules. Every module ships with sample data and works in demo mode.
+# Set backend.mode to "cloudflare" after creating the D1 database described in
+# README.md.
+features:
+  posts: true
+  home_stats: true
+  guestbook: true
+  guestbook_likes: true
+  story_tree: true
+  travel_rankings: true
+
+backend:
+  mode: auto # auto | demo | cloudflare
+  api_base: /api
 
 # All collections live under content/ for a clean root.
 collections_dir: content
@@ -82,7 +97,7 @@ defaults:
     values:
       layout: "post"
       lang: en
-      section: writing
+      section: posts
 
 exclude:
   - Gemfile
@@ -95,6 +110,13 @@ exclude:
   - .jekyll-cache/
   - gemfiles/
   - vendor/
+  - _private-data/
+  - migrations/
+  - wrangler.toml
+  - jekyll-dev.out.log
+  - jekyll-dev.err.log
+  - _site_verify/
+  - _site_dev/
 
 sass:
   style: compressed
@@ -114,5 +136,6 @@ nav:
   - { key: "bookshelf",  label: "Bookshelf",  path: "/bookshelf/",  accent: "yuzu"    }
   - { key: "recipes",    label: "Recipes",    path: "/recipes/",    accent: "sakura"  }
   - { key: "writing",    label: "Writing",    path: "/writing/",    accent: "sumire"  }
+  - { key: "posts",      label: "Journal",    path: "/posts/",      accent: "sumire"  }
   - { key: "message",    label: "Guestbook",  path: "/message/",    accent: "matcha"  }
   - { key: "friends",    label: "Friends",    path: "/friends/",    accent: "sora"    }

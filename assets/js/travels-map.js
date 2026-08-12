@@ -1,8 +1,7 @@
-// ─────────────────────────────────────────────────────────────
-//   travels-map.js -- World map + bubble cloud for travels page
-//   Injected via window.renderTravelMap, depends on TravelsNS
-//   exposed by travels.js.
-// ─────────────────────────────────────────────────────────────// ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
+//   travels-map.js —— 旅迹页面世界地图 + 气泡云
+//   通过 window.renderTravelMap 注入，依赖 travels.js 暴露的 TravelsNS
+// ════════════════════════════════════════════════════════════
 
 (function () {
   "use strict";
@@ -10,7 +9,7 @@
   window.renderTravelMap = function () {
     var NS = window.TravelsNS;
     if (!NS || !NS.MAP_EL) return;
-    var parseCards = NS.parseCards;
+    var getCards = NS.getCards || NS.parseCards;
     var applyFilter = NS.applyFilter;
     var INPUT_EL = NS.INPUT_EL;
     var MAP_EL = NS.MAP_EL;
@@ -27,7 +26,12 @@
     function applyCountrySearch(country) {
       if (!country) return;
       var target = mapSearchTargets[country];
-      if (NS.setSearchScopes) NS.setSearchScopes([target ? target.scope : "country"]);
+      if (NS.setSearchScopes) {
+        var scopes = NS.getSearchScopes ? NS.getSearchScopes() : ["region", "title", "body"];
+        var requiredScope = target ? target.scope : "region";
+        if (scopes.indexOf(requiredScope) === -1) scopes.push(requiredScope);
+        NS.setSearchScopes(scopes);
+      }
       INPUT_EL.value = target ? target.value : country;
       applyFilter();
       INPUT_EL.blur();
@@ -67,7 +71,7 @@
       if (TOOLTIP_EL) TOOLTIP_EL.hidden = true;
     }
 
-    var allCards = parseCards();
+    var allCards = getCards();
     var countryCount = {};
     function getCardProvince(card) {
       var province = "";
@@ -82,6 +86,7 @@
       return province;
     }
     allCards.forEach(function (card) {
+      if (card.type === "country") return;
       var key = card.country;
       if (!countryCount[key]) countryCount[key] = { count: 0, continent: card.continent, cities: [], provinces: [] };
       countryCount[key].count++;
@@ -115,9 +120,9 @@
     var entries = Object.keys(countryCount).map(function (k) {
       var names = parseCountryHeading(k);
       return { name: names.name, cn: names.cn, en: names.en, data: countryCount[k] };
-    }).sort(function (a, b) { return b.data.count - a.data.count; });
+    }).sort(function (a, b) { return getMapCount(b) - getMapCount(a); });
 
-    var maxCities = entries.length ? entries[0].data.count : 1;
+    var maxPlaces = entries.length ? getMapCount(entries[0]) : 1;
     var visitedSet = {};
     entries.forEach(function (e) { visitedSet[e.cn] = e; });
     var defaultHighlighted = {};
@@ -130,9 +135,9 @@
     ];
 
     function hideTravelPageLoading() {
-      var el = document.getElementById("page-loading");
+      var el = document.getElementById("travel-page-loading");
       if (el) {
-        el.classList.add("page-loading--hidden");
+        el.classList.add("travel-page-loading--hidden");
         setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 400);
       }
     }
@@ -240,7 +245,7 @@
         });
         var mainCenter = ringCenter(largest[0]);
 
-        // Keep islands near the mainland, but ignore overseas territories that would drag the camera to another continent.
+        // 保留主体附近的岛屿，但忽略会把镜头拉到另一洲的海外领地。
         return polygons.filter(function (polygon) {
           var center = ringCenter(polygon[0]);
           var lonDistance = Math.abs(center[0] - mainCenter[0]);
@@ -290,7 +295,7 @@
         });
         if (countryMatch) return countryMatch;
 
-        // Handle city-states like Vatican recorded in another country file: identify by city title, filter by city on click.
+        // 兼容梵蒂冈这类记录在另一国家文件中的城邦：从城市标题识别，点击时改用城市筛选。
         var nestedMatch = null;
         entries.some(function (entry) {
           return entry.data.cities.some(function (cityTitle) {
@@ -305,7 +310,7 @@
               en: cityNames.en,
               data: { count: 1, continent: entry.data.continent, cities: [] }
             };
-            mapSearchTargets[cityNames.cn] = { scope: "city", value: cityTitle };
+            mapSearchTargets[cityNames.cn] = { scope: "title", value: cityTitle };
             return true;
           });
         });
@@ -407,14 +412,14 @@
       var resetZoomBtn = document.createElement("button");
       resetZoomBtn.type = "button";
       resetZoomBtn.className = "travel-map-reset";
-      resetZoomBtn.setAttribute("aria-label", "Reset map view");
-      resetZoomBtn.title = "Reset map view";
-      resetZoomBtn.textContent = "↺";
+      resetZoomBtn.setAttribute("aria-label", "重置地图视野");
+      resetZoomBtn.title = "重置地图视野";
+      resetZoomBtn.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v6h6"/><path d="M5.6 10a8 8 0 1 1 1.9 7.5"/></svg>';
       resetZoomBtn.hidden = true;
       viewport.appendChild(resetZoomBtn);
       layout.appendChild(viewport);
 
-      // pan / zoom state lives in the renderWorldMap scope, shared by rAF and event handlers.
+      // pan / zoom 状态声明在 renderWorldMap 作用域，供 rAF 与事件处理函数共享
       var panX = 0, panY = 0, zoom = 1, defaultZoom = 1;
       var defaultPanX = 0, defaultPanY = 0;
       var mapAnimationFrame = null, initialAnimationRunning = false;
@@ -431,11 +436,11 @@
         var vWidth = viewport.clientWidth || 400;
         var vHeight = viewport.clientHeight || 280;
         var relativeZoom = zoom / Math.max(defaultZoom, 0.01);
-        // Small viewports switch to dots earlier for tiny countries; large viewports keep real outlines longer.
+        // 小视口更早用点替代难以辨认的小国；大视口则尽量保留真实轮廓。
         var tinyCountryPixels = Math.max(5, Math.min(9, 10.5 - vWidth / 240));
         var showTinyCountryMarkers = relativeZoom >= 1.6;
         var basePathTolerance = vWidth <= 640 ? 0.26 : 0.14;
-        // Even at very high zoom, keep aggressive downsampling to avoid redrawing coastlines on every drag frame.
+        // 极高倍率下仍保留较积极的下采样，避免拖动时反复绘制海岸线细碎节点。
         var margin = 96 / zoom;
         var visibleBounds = {
           minX: (-panX / zoom) - margin,
@@ -450,7 +455,7 @@
           var screenHeight = item.bounds ? (item.bounds.maxY - item.bounds.minY) * zoom : Infinity;
           var screenSpan = Math.max(screenWidth, screenHeight);
           var sizeFactor = screenSpan < 24 ? 3 : (screenSpan < 64 ? 1.8 : 1);
-          // Sample by final display size: smaller outlines get more simplification, larger ones restore more detail.
+          // 按最终显示尺寸采样：轮廓越小简化越强，放大后则恢复更多细节。
           var sizeFactor = screenSpan < 24 ? 3 : (screenSpan < 64 ? 1.8 : 1);
           var detailFactor = Math.max(0.38, 1 / Math.sqrt(Math.max(1, relativeZoom)));
           var pathTolerance = Number((basePathTolerance * sizeFactor * detailFactor).toFixed(3));
@@ -491,7 +496,7 @@
         var changed = Math.abs(zoom - defaultZoom) > 0.02 ||
           Math.abs(panX - defaultPanX) > 2 || Math.abs(panY - defaultPanY) > 2;
         resetZoomBtn.hidden = !!hideReset || !changed;
-        // During drag, only translate the pre-rendered layer instead of re-traversing all country paths per frame.
+        // 拖动时只移动已经渲染好的图层，避免每帧遍历和改写所有国家路径。
         if (!dragging) scheduleVisibleMapUpdate();
       }
 
@@ -559,7 +564,9 @@
         "NZ": [174.8860, -40.9006], "CH": [8.2275, 46.8182],
       };
       function getGeoPoint(callback) {
-        // Step 1: Cloudflare Pages geo (no permission needed, server-side).
+        // Step 1: Cloudflare Pages geo (only available in production via CF).
+        var isLocalhost = location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "0.0.0.0";
+        if (isLocalhost) { callback(null); return; }
         fetch("/geo").then(function (r) { return r.json(); }).then(function (data) {
           if (data.latitude != null && data.longitude != null) {
             callback(project(data.longitude, data.latitude));
@@ -649,7 +656,6 @@
         if (!path || !viewport.contains(path)) return "";
         return path.getAttribute("aria-label").split(" [")[0];
       }
-      viewport.style.cursor = "grab";
       viewport.addEventListener("pointerdown", function (e) {
         if (e.pointerType === "mouse" && e.button !== 0) return;
         stopMapAnimation();
@@ -660,7 +666,6 @@
         }
         dragStartX = e.clientX; dragStartY = e.clientY;
         dsX = e.clientX - panX; dsY = e.clientY - panY;
-        viewport.style.cursor = "grabbing";
         canvas.querySelector("svg").style.shapeRendering = "optimizeSpeed";
         if (e.pointerType === "mouse") e.preventDefault();
       });
@@ -690,7 +695,7 @@
         if (activePointerId !== null) {
           try { viewport.releasePointerCapture(activePointerId); } catch (ignore) {}
         }
-        dragging = false; activePointerId = null; viewport.style.cursor = "grab";
+        dragging = false; activePointerId = null;
         canvas.querySelector("svg").style.shapeRendering = "geometricPrecision";
         scheduleVisibleMapUpdate();
       }
@@ -739,7 +744,7 @@
         applyCountrySearch(country);
       });
 
-      layout.appendChild(renderBubbleCloud(entries, maxCities, 400, 350));
+      layout.appendChild(renderBubbleCloud(entries, maxPlaces, 400, 350));
       MAP_EL.appendChild(layout);
       hideTravelPageLoading();
     }
@@ -747,10 +752,10 @@
     function renderBubbleAndBlocks() {
       var layout = document.createElement("div");
       layout.className = "travel-map-layout";
-      layout.appendChild(renderBubbleCloud(entries, maxCities, 400, 350));
+      layout.appendChild(renderBubbleCloud(entries, maxPlaces, 400, 350));
       var hint = document.createElement("p");
       hint.className = "travel-map-hint";
-      hint.textContent = "Download world.geojson into assets/data/ to enable the world map";
+      hint.textContent = "下载 world.geojson 到 assets/data/ 可启用世界地图";
       layout.appendChild(hint);
       MAP_EL.appendChild(layout);
       hideTravelPageLoading();
@@ -762,67 +767,12 @@
       viewport.style.height = chartH + "px";
       viewport.style.touchAction = "pan-y";
 
-      // Dynamic placement: grow area until all bubbles fit
-      var placeW = chartW, placeH = chartH;
-      var bubbleData;
-      var attempts = 0;
-
-      while (true) {
-        bubbleData = entriesArr.map(function (e) {
-          return { entry: e, radius: Math.round(22 + (e.data.count / maxC) * 22), x: 0, y: 0 };
-        });
-        var cx = placeW / 2, cy = placeH / 2, placed = [];
-        var allOk = true;
-
-        for (var bi = 0; bi < bubbleData.length; bi++) {
-          var b = bubbleData[bi];
-          if (placed.length === 0) { b.x = cx; b.y = cy; placed.push(b); continue; }
-          var best = null, bestDist = Infinity;
-          var searchMax = Math.max(placeW, placeH) * 1.5;
-          for (var angle = 0; angle < Math.PI * 2; angle += 0.08) {
-            for (var d = 3; d < searchMax; d += 1.5) {
-              var x = cx + Math.cos(angle) * d, y = cy + Math.sin(angle) * d, ok = true;
-              for (var i = 0; i < placed.length; i++) {
-                var p = placed[i], ddx = x - p.x, ddy = y - p.y, md = b.radius + p.radius + 2;
-                if (ddx * ddx + ddy * ddy < md * md) { ok = false; break; }
-              }
-              if (ok && x - b.radius > 2 && x + b.radius < placeW - 2 && y - b.radius > 2 && y + b.radius < placeH - 2) {
-                if (d < bestDist) { bestDist = d; best = { x: x, y: y }; }
-              }
-            }
-          }
-          if (!best) { allOk = false; break; }
-          b.x = best.x; b.y = best.y;
-          placed.push(b);
-        }
-
-        if (allOk || attempts > 20) break;
-        placeW = Math.round(placeW * 1.4);
-        placeH = Math.round(placeH * 1.4);
-        attempts++;
-      }
-
-      // The packing algorithm centers its search around the canvas, but an
-      // irregular cluster can still end up visually off-centre. Re-centre the
-      // occupied bubble bounds (rather than the empty canvas around them).
-      if (bubbleData.length) {
-        var bubbleMinX = Infinity, bubbleMaxX = -Infinity;
-        var bubbleMinY = Infinity, bubbleMaxY = -Infinity;
-        bubbleData.forEach(function (b) {
-          bubbleMinX = Math.min(bubbleMinX, b.x - b.radius);
-          bubbleMaxX = Math.max(bubbleMaxX, b.x + b.radius);
-          bubbleMinY = Math.min(bubbleMinY, b.y - b.radius);
-          bubbleMaxY = Math.max(bubbleMaxY, b.y + b.radius);
-        });
-        var bubbleShiftX = placeW / 2 - (bubbleMinX + bubbleMaxX) / 2;
-        var bubbleShiftY = placeH / 2 - (bubbleMinY + bubbleMaxY) / 2;
-        bubbleShiftX = Math.max(2 - bubbleMinX, Math.min(placeW - 2 - bubbleMaxX, bubbleShiftX));
-        bubbleShiftY = Math.max(2 - bubbleMinY, Math.min(placeH - 2 - bubbleMaxY, bubbleShiftY));
-        bubbleData.forEach(function (b) {
-          b.x += bubbleShiftX;
-          b.y += bubbleShiftY;
-        });
-      }
+      var packedBubbles = window.BubblePack.pack(entriesArr.map(function (e) {
+        return { entry: e, radius: Math.round(22 + (getMapCount(e) / maxC) * 22) };
+      }), chartW, chartH, 2);
+      var bubbleData = packedBubbles.items;
+      var placeW = packedBubbles.width;
+      var placeH = packedBubbles.height;
 
       var canvas = document.createElement("div");
       canvas.className = "travel-bubble-canvas";
@@ -830,6 +780,7 @@
       canvas.style.height = placeH + "px";
 
       var allBubbles = [];
+      var activeRepulsionBubble = null;
       bubbleData.forEach(function (b) {
         var el = document.createElement("button");
         el.type = "button";
@@ -839,8 +790,8 @@
         el.style.left = (b.x - b.radius) + "px";
         el.style.top = (b.y - b.radius) + "px";
         el.style.fontSize = Math.max(8, Math.round(8 + (b.radius / 44) * 5)) + "px";
-        el.textContent = b.entry.cn + " [" + b.entry.data.count + "]";
-        el.setAttribute("aria-label", b.entry.cn + " [" + b.entry.data.count + "]: " + b.entry.data.cities.join(", "));
+        el.textContent = b.entry.cn + " [" + getMapCount(b.entry) + "]";
+        el.setAttribute("aria-label", b.entry.cn + " [" + getMapCount(b.entry) + "]: " + getMapPlaces(b.entry).join(", "));
         el.addEventListener("mouseenter", function (e) { showMapTooltip(b.entry.cn, b.entry, e); });
         el.addEventListener("mousemove", moveMapTooltip);
         el.addEventListener("mouseleave", hideMapTooltip);
@@ -868,11 +819,6 @@
         zoom = Math.max(minZoom, Math.min(maxZoom, zoom));
         clampPan();
         canvas.style.transform = "translate(" + panX + "px," + panY + "px) scale(" + zoom + ")";
-        resetBtn.hidden = !zoomEnabled;
-        var atTwoX = zoom >= maxZoom * 0.98;
-        resetBtn.textContent = atTwoX ? "2x" : "1x";
-        resetBtn.setAttribute("aria-label", atTwoX ? "\u5f53\u524d 2x\uff0c\u70b9\u51fb\u7f29\u5c0f\u5230 1x" : "\u5f53\u524d 1x\uff0c\u70b9\u51fb\u653e\u5927\u5230 2x");
-        resetBtn.title = atTwoX ? "\u5f53\u524d 2x\uff0c\u70b9\u51fb\u7f29\u5c0f\u5230 1x" : "\u5f53\u524d 1x\uff0c\u70b9\u51fb\u653e\u5927\u5230 2x";
       }
       function fitBubbles() {
         var isMobile = window.matchMedia && window.matchMedia("(max-width: 640px)").matches;
@@ -894,21 +840,21 @@
         defaultZoom = zoom;
         panX = vW / 2 - placeW / 2 * zoom;
         panY = vH / 2 - placeH / 2 * zoom;
-        viewport.style.cursor = zoomEnabled ? "grab" : "default";
         applyTransform();
       }
 
       var dragging = false, activePointerId = null, dsX = 0, dsY = 0, dragStartX = 0, dragStartY = 0, didDrag = false;
-      viewport.style.cursor = "grab";
+      
       viewport.addEventListener("pointerdown", function (e) {
         if (!zoomEnabled) return;
         if (e.pointerType === "mouse" && e.button !== 0) return;
         dragging = true; didDrag = false;
         activePointerId = e.pointerId;
-        viewport.setPointerCapture(activePointerId);
+        if (!e.target.closest(".travel-bubble")) {
+          viewport.setPointerCapture(activePointerId);
+        }
         dragStartX = e.clientX; dragStartY = e.clientY;
         dsX = e.clientX - panX; dsY = e.clientY - panY;
-        viewport.style.cursor = "grabbing";
         if (e.pointerType === "mouse") e.preventDefault();
       });
       viewport.addEventListener("pointermove", function (e) {
@@ -922,7 +868,7 @@
         if (activePointerId !== null) {
           try { viewport.releasePointerCapture(activePointerId); } catch (ignore) {}
         }
-        dragging = false; activePointerId = null; viewport.style.cursor = zoomEnabled ? "grab" : "default";
+        dragging = false; activePointerId = null;
       }
       viewport.addEventListener("pointerup", endBubblePointerDrag);
       viewport.addEventListener("pointercancel", endBubblePointerDrag);
@@ -932,36 +878,79 @@
         if (e.ctrlKey) e.preventDefault();
       }, { passive: false });
 
-      var resetBtn = document.createElement("button");
-      resetBtn.type = "button";
-      resetBtn.className = "travel-map-reset travel-map-reset--bubble";
-      resetBtn.setAttribute("aria-label", "\u7f29\u56de\u9ed8\u8ba4\u5c3a\u5bf8");
-      resetBtn.title = "\u7f29\u56de\u9ed8\u8ba4\u5c3a\u5bf8";
-      resetBtn.textContent = "\u2212";
-      resetBtn.hidden = true;
-      resetBtn.addEventListener("click", function () {
-        var vW = viewport.clientWidth || 400, vH = viewport.clientHeight || 280;
-        zoom = zoom >= maxZoom * 0.98 ? minZoom : maxZoom;
-        panX = vW / 2 - placeW / 2 * zoom;
-        panY = vH / 2 - placeH / 2 * zoom;
-        applyTransform();
-      });
-      viewport.appendChild(resetBtn);
-
       canvas.addEventListener("mousemove", function (e) {
         if (dragging) return;
+        var hoveredBubble = e.target.closest(".travel-bubble");
+        if (hoveredBubble) activeRepulsionBubble = hoveredBubble;
+        if (activeRepulsionBubble && !activeRepulsionBubble.isConnected) activeRepulsionBubble = null;
+        var canvasScale = canvas.offsetWidth ? canvas.getBoundingClientRect().width / canvas.offsetWidth : 1;
+        var sourceRect = activeRepulsionBubble && activeRepulsionBubble.getBoundingClientRect();
+        if (sourceRect && !hoveredBubble) {
+          var sourcePointerDistance = Math.hypot(
+            e.clientX - (sourceRect.left + sourceRect.width / 2),
+            e.clientY - (sourceRect.top + sourceRect.height / 2)
+          );
+          if (sourcePointerDistance > Math.max(90, sourceRect.width * 1.2)) {
+            activeRepulsionBubble = null;
+            sourceRect = null;
+          }
+        }
+        var sourceRadius = sourceRect ? sourceRect.width / 2 : 0;
+        var sourceCenterX = sourceRect ? sourceRect.left + sourceRect.width / 2 : e.clientX;
+        var sourceCenterY = sourceRect ? sourceRect.top + sourceRect.height / 2 : e.clientY;
+        var sourcePointerX = sourceCenterX - e.clientX;
+        var sourcePointerY = sourceCenterY - e.clientY;
+        var sourceDistance = Math.hypot(sourcePointerX, sourcePointerY);
+        var sourceDirectionX = sourceDistance > 0.1 ? -sourcePointerX / sourceDistance : 0;
+        var sourceDirectionY = sourceDistance > 0.1 ? -sourcePointerY / sourceDistance : 1;
+        var sourceInfluence = Math.max(92, sourceRadius + 48);
+        var sourceMaxPush = Math.max(3, Math.min(7, sourceRadius * 0.15));
+        var sourcePush = sourceRadius && sourceDistance < sourceInfluence
+          ? (1 - sourceDistance / sourceInfluence) * sourceMaxPush
+          : 0;
+        var projectedSourceX = sourceCenterX + sourceDirectionX * sourcePush;
+        var projectedSourceY = sourceCenterY + sourceDirectionY * sourcePush;
         allBubbles.forEach(function (el) {
           var r = el.getBoundingClientRect();
-          var bx = r.left + r.width / 2, by = r.top + r.height / 2;
-          var ddx = e.clientX - bx, ddy = e.clientY - by;
-          var dist = Math.sqrt(ddx * ddx + ddy * ddy);
-          if (dist < 80 && dist > 0.1) {
-            var force = (1 - dist / 80) * 5;
-            el.style.transform = "translate(" + (-ddx / dist * force) + "px," + (-ddy / dist * force) + "px)";
+          var centerX = r.left + r.width / 2, centerY = r.top + r.height / 2;
+          var radius = r.width / 2;
+          if (el === activeRepulsionBubble) {
+            el.style.transform = "translate(" + (sourceDirectionX * sourcePush / Math.max(canvasScale, 0.01)) + "px," + (sourceDirectionY * sourcePush / Math.max(canvasScale, 0.01)) + "px)";
+            return;
+          }
+          if (!sourceRadius) {
+            var pointerX = e.clientX - centerX, pointerY = e.clientY - centerY;
+            var pointerDistance = Math.hypot(pointerX, pointerY);
+            var pointerInfluence = Math.max(80, radius + 36);
+            if (pointerDistance < pointerInfluence && pointerDistance > 0.1) {
+              var pointerForce = (1 - pointerDistance / pointerInfluence) * 6 / Math.max(canvasScale, 0.01);
+              el.style.transform = "translate(" + (-pointerX / pointerDistance * pointerForce) + "px," + (-pointerY / pointerDistance * pointerForce) + "px)";
+            } else { el.style.transform = ""; }
+            return;
+          }
+          var sourceToTargetX = centerX - sourceCenterX;
+          var sourceToTargetY = centerY - sourceCenterY;
+          var sourceToTargetDistance = Math.hypot(sourceToTargetX, sourceToTargetY);
+          var influenceRadius = sourceRadius + radius + Math.max(72, sourceRadius * 1.35);
+          if (sourceToTargetDistance < influenceRadius && sourceToTargetDistance > 0.1) {
+            var targetDirectionX = sourceToTargetX / sourceToTargetDistance;
+            var targetDirectionY = sourceToTargetY / sourceToTargetDistance;
+            var alignment = Math.max(0, targetDirectionX * sourceDirectionX + targetDirectionY * sourceDirectionY);
+            var directionalWeight = 0.12 + 0.88 * alignment * alignment;
+            var maxPush = Math.max(6, Math.min(12, (sourceRadius + radius) * 0.1));
+            var directionalPush = (1 - sourceToTargetDistance / influenceRadius) * maxPush * directionalWeight;
+            var projectedX = centerX - projectedSourceX;
+            var projectedY = centerY - projectedSourceY;
+            var projectedDistance = Math.hypot(projectedX, projectedY);
+            var overlapPush = Math.max(0, sourceRadius + radius + 2 - projectedDistance);
+            var force = Math.max(directionalPush, overlapPush) / Math.max(canvasScale, 0.01);
+            var pushDirectionX = projectedDistance > 0.1 ? projectedX / projectedDistance : targetDirectionX;
+            var pushDirectionY = projectedDistance > 0.1 ? projectedY / projectedDistance : targetDirectionY;
+            el.style.transform = "translate(" + (pushDirectionX * force) + "px," + (pushDirectionY * force) + "px)";
           } else { el.style.transform = ""; }
         });
       });
-      canvas.addEventListener("mouseleave", function () { allBubbles.forEach(function (el) { el.style.transform = ""; }); });
+      canvas.addEventListener("mouseleave", function () { activeRepulsionBubble = null; allBubbles.forEach(function (el) { el.style.transform = ""; }); });
 
       requestAnimationFrame(function () { fitBubbles(); });
       var resizeTimer;
@@ -975,7 +964,7 @@
 
     tryFetchMap(0);
   };
-  // travels-map.js (defer) runs after travels.js, ensuring init() has completed.
+  // travels-map.js (defer) 在 travels.js 之后执行，确保 init() 已完成
   function scheduleTravelMap() {
     var map = document.getElementById("travel-map-container");
     if (!map) return;

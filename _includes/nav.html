@@ -5,6 +5,7 @@
       <span class="site-header__brand-text">{{ site.title }}</span>
     </a>
 
+    <div class="site-header__actions">
     <nav class="site-nav" aria-label="Primary navigation">
       <button class="site-nav__toggle" aria-expanded="false" aria-controls="site-nav__list">
         <span class="sr-only">Menu</span>
@@ -22,5 +23,13 @@
         {% endfor %}
       </ul>
     </nav>
+      <div class="theme-controls">
+        <button class="theme-auto" type="button" aria-label="Disable automatic theme" aria-pressed="true" title="Follow system theme">Auto</button>
+        <button class="theme-toggle" type="button" aria-label="Switch color theme" aria-pressed="false" title="Switch color theme" aria-hidden="true">
+          <span class="theme-toggle__option" aria-hidden="true"><span class="theme-toggle__dot theme-toggle__dot--warm" aria-hidden="true"></span></span>
+          <span class="theme-toggle__option" aria-hidden="true"><span class="theme-toggle__dot theme-toggle__dot--cool" aria-hidden="true"></span></span>
+        </button>
+      </div>
+    </div>
   </div>
 </header>

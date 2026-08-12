@@ -5,7 +5,7 @@ section: recipes
 
 # Simple Tomato Pasta
 
-[From Classic Italian]
+- [From Classic Italian]
 
 A quick weeknight dinner that takes about 15 minutes from start to finish.
 
@@ -27,7 +27,7 @@ A quick weeknight dinner that takes about 15 minutes from start to finish.
 
 # Five-Minute Egg
 
-[From Morning Routine]
+- [From Morning Routine]
 
 The fastest protein you can make.
 
@@ -35,12 +35,12 @@ Bring water to a boil. Gently lower in an egg. Six minutes for soft, eight for h
 
 # Overnight Oats
 
-[From Batch Cooking]
+- [From Batch Cooking]
 
 Combine oats, milk, and yogurt in a jar. Leave in the fridge overnight. Add fruit and honey in the morning.
 
 # Vinegrette Ratio
 
-[From Kitchen Notes]
+- [From Kitchen Notes]
 
 Three parts oil, one part vinegar, a dab of mustard, salt, pepper. Shake in a jar. Keeps for a week.
