@@ -1,11 +1,13 @@
 name: Build and deploy sample blog
 
 on:
-  push:
-    branches: [main]
+  # Template repository: disable automatic builds on push.
+  # push:
+  #   branches: [main]
   workflow_dispatch:
-  schedule:
-    - cron: "17 3 * * *"
+  # Template repository: disable the daily scheduled build.
+  # schedule:
+  #   - cron: "17 3 * * *"
 
 permissions:
   contents: read
