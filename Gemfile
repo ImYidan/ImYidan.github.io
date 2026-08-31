@@ -12,3 +12,7 @@ platforms :windows, :jruby do
 end
 
 gem "ffi", ">= 1.15"
+
+group :test do
+  gem "minitest"
+end
