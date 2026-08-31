@@ -23,10 +23,17 @@ class StyleContractTest < Minitest::Test
     end
   end
 
+  def test_root_default_accent_is_sora
+    main = source("assets/css/main.scss")
+    root = main[/:root\s*\{\n.*?^\}/m]
+    refute_nil root
+    assert_match(/--accent:\s*var\(--sora\)/, root)
+    assert_match(/--accent-soft:\s*var\(--sora-soft\)/, root)
+  end
+
   def test_timeline_uses_page_accent_not_sakura
     components = source("_sass/_components.scss")
-    components = components.encode(Encoding::Windows_31J, invalid: :replace, undef: :replace)
-    timeline = components[/\.timeline__item\s*\{.*?\.timeline__projects/sm]
+    timeline = components[/\.timeline__item\s*\{.*?\.timeline__projects/m]
     refute_nil timeline
     refute_includes timeline, "var(--sakura)"
     refute_includes timeline, "var(--sakura-ink)"
