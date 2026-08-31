@@ -234,7 +234,7 @@
     right: auto;
     gap: $space-4;
   }
-  .site-nav__toggle {
+  .js .site-nav__toggle {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
@@ -245,7 +245,7 @@
     gap: 4px;
     flex-shrink: 0;
   }
- .site-nav__toggle:hover { background: rgba(0,0,0,0.04); }
+ .js .site-nav__toggle:hover { background: rgba(0,0,0,0.04); }
  .site-nav__toggle-bars {
    position: relative;
    width: 18px;
@@ -269,7 +269,7 @@
  }
  .site-nav__toggle-bars::before { top: -5px; }
  .site-nav__toggle-bars::after  { top: 5px; }
- .site-nav__list {
+ .js .site-nav__list {
     position: absolute;
     top: 64px;
     left: 0;
@@ -285,26 +285,48 @@
     pointer-events: none;
     transition: opacity $dur-base $ease, transform $dur-base $ease;
   }
-  .site-nav__list.is-open {
+  .js .site-nav__list.is-open {
     transform: translateY(0);
     opacity: 1;
     pointer-events: auto;
   }
-  .site-nav__item { width: 100%; }
-  .site-nav__link {
+  .js .site-nav__item { width: 100%; }
+  .js .site-nav__link {
     display: block;
     padding: $space-3 $space-4;
     font-size: $fs-base;
     border-radius: $radius-md;
   }
-.site-nav__toggle[aria-expanded="true"] .site-nav__toggle-bars {
+.js .site-nav__toggle[aria-expanded="true"] .site-nav__toggle-bars {
   background: transparent;
   /* expanding: fade the middle bar out immediately so it's gone before the
      outer bars converge into the X. */
   transition: background $dur-fast $ease;
 }
-.site-nav__toggle[aria-expanded="true"] .site-nav__toggle-bars::before { top: 0; transform: rotate(45deg); }
-.site-nav__toggle[aria-expanded="true"] .site-nav__toggle-bars::after  { top: 0; transform: rotate(-45deg); }
+.js .site-nav__toggle[aria-expanded="true"] .site-nav__toggle-bars::before { top: 0; transform: rotate(45deg); }
+.js .site-nav__toggle[aria-expanded="true"] .site-nav__toggle-bars::after  { top: 0; transform: rotate(-45deg); }
+}
+
+@media (max-width: 640px) {
+  .no-js .site-header__inner {
+    height: auto;
+    min-height: 64px;
+    flex-wrap: wrap;
+    padding-block: $space-2;
+  }
+  .no-js .site-header__actions {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: $space-2;
+  }
+  .no-js .site-nav__list {
+    flex-wrap: wrap;
+  }
+  .no-js .site-nav__link {
+    padding: $space-2;
+    font-size: $fs-sm;
+  }
 }
 
 /* ═══ 页脚 ═══ */

@@ -1443,7 +1443,16 @@ mark.post-search-hit {
   background: var(--accent-soft);
 }
 .timeline__role {
-  color: var(--sumire-ink);
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2em 0.65em;
+  border: 1px solid color-mix(in srgb, var(--sora) 24%, transparent);
+  border-radius: $radius-pill;
+  background: var(--sora-soft);
+  color: var(--sora-ink);
+  font-family: $font-sans;
+  font-size: $fs-sm;
+  line-height: $lh-snug;
 }
 .timeline__detail {
   font-size: $fs-base;
@@ -1503,14 +1512,14 @@ mark.post-search-hit {
   gap: $space-4;
 }
 .project {
-  border-left: 3px solid var(--project-accent, var(--accent));
+  border-left: 3px solid var(--project-accent, var(--sora));
   padding-left: $space-4;
 }
 .project__title {
   font-family: $font-serif;
   font-size: $fs-base;
   font-weight: 600;
-  color: var(--project-ink, var(--ink));
+  color: var(--project-ink, var(--sora-ink));
   margin-bottom: $space-2;
 }
 .project__content {

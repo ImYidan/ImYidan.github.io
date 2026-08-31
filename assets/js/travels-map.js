@@ -564,6 +564,9 @@
         "NZ": [174.8860, -40.9006], "CH": [8.2275, 46.8182],
       };
       function getGeoPoint(callback) {
+        // Static builds do not have the optional Cloudflare /geo endpoint.
+        var backendMode = document.body && document.body.getAttribute("data-backend-mode");
+        if (backendMode === "static") { callback(null); return; }
         // Step 1: Cloudflare Pages geo (only available in production via CF).
         var isLocalhost = location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "0.0.0.0";
         if (isLocalhost) { callback(null); return; }

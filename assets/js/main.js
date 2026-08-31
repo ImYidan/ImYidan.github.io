@@ -37,28 +37,33 @@
     var list = document.querySelector(".site-nav__list");
     if (!toggle || !list) return;
 
+    var mq = window.matchMedia("(max-width: 1100px)");
+
+    function setNavState(isOpen) {
+      var isMobile = mq.matches;
+      if (!isMobile) isOpen = false;
+      toggle.setAttribute("aria-expanded", String(isOpen));
+      list.classList.toggle("is-open", isOpen);
+      list.hidden = isMobile && !isOpen;
+    }
+
+    setNavState(false);
+
     toggle.addEventListener("click", function () {
-      var isOpen = toggle.getAttribute("aria-expanded") === "true";
-      toggle.setAttribute("aria-expanded", String(!isOpen));
-      list.classList.toggle("is-open", !isOpen);
+      setNavState(toggle.getAttribute("aria-expanded") !== "true");
     });
 
     // 点击导航链接后自动收起
     list.querySelectorAll("a").forEach(function (link) {
       link.addEventListener("click", function () {
-        toggle.setAttribute("aria-expanded", "false");
-        list.classList.remove("is-open");
+        setNavState(false);
       });
     });
 
     // 大屏幕重置
-    var mq = window.matchMedia("(min-width: 1101px)");
-    mq.addEventListener("change", function (e) {
-      if (e.matches) {
-        toggle.setAttribute("aria-expanded", "false");
-        list.classList.remove("is-open");
-      }
-    });
+    var handleViewportChange = function () { setNavState(false); };
+    if (mq.addEventListener) mq.addEventListener("change", handleViewportChange);
+    else mq.addListener(handleViewportChange);
 
     fitFactCards();
   });

@@ -14,6 +14,9 @@ class DeploymentWorkflowTest < Minitest::Test
     assert_includes yaml, "actions/configure-pages@v5"
     assert_includes yaml, "actions/upload-pages-artifact@v3"
     assert_includes yaml, "actions/deploy-pages@v5"
+    refute_match(/^permissions:/, yaml)
+    assert_match(/build:\n    permissions:\n      contents: read\n      pages: read/, yaml)
+    assert_match(/deploy:\n    permissions:\n      pages: write\n      id-token: write/, yaml)
   end
 
   def test_lockfile_declares_linux_platform_for_pages_build

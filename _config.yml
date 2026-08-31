@@ -62,8 +62,7 @@ backend:
 # All collections live under content/ for a clean root.
 collections_dir: content
 
-plugins:
-  - jekyll-feed
+plugins: []
 
 # Custom collections.
 # Most use output: false -- content is rendered inline on their
@@ -108,6 +107,26 @@ exclude:
   - .jekyll-cache/
   - gemfiles/
   - vendor/
+  - functions/
+  - test/
+  - docs/
+  - assets/data/story_tree.json
+  - assets/js/bookshelf.js
+  - assets/js/cards.js
+  - assets/js/engagement.js
+  - assets/js/friends.js
+  - assets/js/home-stats.js
+  - assets/js/listing.js
+  - assets/js/message.js
+  - assets/js/posts.js
+  - assets/js/recipes.js
+  - assets/js/search.js
+  - assets/js/story-tree.js
+  - assets/js/travel-rankings.js
+  - assets/js/travels-rankings.js
+  - assets/js/writing-cards.js
+  - assets/js/writing-gallery.js
+  - assets/js/writing.js
   - _private-data/
   - migrations/
   - wrangler.toml
@@ -126,6 +145,7 @@ exclude:
 sass:
   style: compressed
   sass_dir: _sass
+  sourcemap: never
 
 # ════════════════════════════════════════════════════════════
 #  Navigation -- read by _includes/nav.html.

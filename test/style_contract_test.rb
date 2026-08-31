@@ -42,9 +42,28 @@ class StyleContractTest < Minitest::Test
 
   def test_timeline_uses_page_accent_not_sakura
     components = source("_sass/_components.scss")
-    timeline = components[/\.timeline__item\s*\{.*?\.timeline__projects/m]
+    timeline = components[/\.timeline::before\s*\{.*?\.project__content/m]
     refute_nil timeline
+    assert_match(/\.timeline::before\s*\{[^}]*var\(--accent\)[^}]*var\(--accent-soft\)/m, timeline)
+    assert_match(/\.timeline__role\s*\{[^}]*background:\s*var\(--sora-soft\)[^}]*color:\s*var\(--sora-ink\)/m, timeline)
+    assert_match(/\.project\s*\{[^}]*var\(--project-accent, var\(--sora\)\)/m, timeline)
     refute_includes timeline, "var(--sakura)"
     refute_includes timeline, "var(--sakura-ink)"
+  end
+
+
+  def test_runtime_project_accents_remain_sora
+    script = source("assets/js/experience.js")
+    assert_includes script, 'project.style.setProperty("--project-accent", "var(--sora)")'
+    assert_includes script, 'project.style.setProperty("--project-ink", "var(--sora-ink)")'
+    refute_includes script, "--sakura"
+    refute_includes script, "--matcha"
+    refute_includes script, "--yuzu"
+    refute_includes script, "--sumire"
+  end
+
+  def test_travels_geo_lookup_skips_static_backend
+    script = source("assets/js/travels-map.js")
+    assert_match(/data-backend-mode.*?static.*?callback\(null\).*?return/m, script)
   end
 end

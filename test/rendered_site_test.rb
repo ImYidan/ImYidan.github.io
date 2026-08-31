@@ -30,6 +30,14 @@ class RenderedSiteTest < Minitest::Test
     end.sort
   end
 
+  def generated_artifacts
+    self.class.build_site
+    Dir.glob(File.join(DESTINATION, "**", "*"), File::FNM_DOTMATCH).filter_map do |path|
+      next unless File.file?(path)
+      path.delete_prefix("#{DESTINATION}/")
+    end.sort
+  end
+
   def test_home_has_only_first_release_sections
     html = page("index.html")
     assert_includes html, "A small corner of my world."
@@ -46,12 +54,65 @@ class RenderedSiteTest < Minitest::Test
     assert_equal %w[/ /about/ /experience/ /travels/], generated_html_routes
   end
 
+  def test_generated_artifact_is_the_exact_first_release_surface
+    expected = %w[
+      about/index.html
+      assets/css/main.css
+      assets/data/world.geojson
+      assets/favicon.svg
+      assets/js/bubble-pack.js
+      assets/js/experience.js
+      assets/js/main.js
+      assets/js/travels-map.js
+      assets/js/travels-summary.js
+      assets/js/travels.js
+      experience/index.html
+      index.html
+      travels/index.html
+    ]
+    assert_equal expected, generated_artifacts
+
+    forbidden_prefixes = %w[docs/ functions/ test/]
+    forbidden_names = %w[feed.xml]
+    generated_artifacts.each do |artifact|
+      refute forbidden_prefixes.any? { |prefix| artifact.start_with?(prefix) }, artifact
+      refute_includes forbidden_names, artifact
+    end
+  end
+
+  def test_navigation_is_progressively_enhanced
+    html = page("index.html")
+    assert_match(/<html[^>]*class="no-js"/, html)
+    assert_includes html, 'document.documentElement.classList.replace("no-js", "js");'
+    assert_match(/<button[^>]*class="site-nav__toggle"[^>]*aria-expanded="false"[^>]*aria-controls="site-nav__list"/, html)
+    assert_match(/<ul class="site-nav__list" id="site-nav__list">/, html,
+                 "navigation links must not be hidden in server-rendered markup")
+
+    css = page("assets/css/main.css")
+    assert_match(/\.site-nav__toggle\{display:none\}/, css)
+    assert_match(/@media\(max-width:\s*1100px\).*?\.js \.site-nav__toggle\{display:inline-flex/m, css)
+
+    script = page("assets/js/main.js")
+    assert_includes script, "list.hidden = isMobile && !isOpen;"
+    assert_includes script, 'toggle.setAttribute("aria-expanded", String(isOpen));'
+    assert_includes script, 'list.classList.toggle("is-open", isOpen);'
+  end
+
   def test_experience_has_exact_degrees_and_safe_school_links
     html = page("experience/index.html")
     assert_includes html, "MSc AI² EEE"
     assert_includes html, "BSc CS Computing"
     assert_match(/href="https:\/\/www\.imperial\.ac\.uk\/"[^>]*target="_blank"[^>]*rel="noopener noreferrer"/, html)
     assert_match(/href="https:\/\/www\.jnu\.edu\.cn\/"[^>]*target="_blank"[^>]*rel="noopener noreferrer"/, html)
+  end
+
+  def test_footer_identifies_github_pages_hosting_without_rss
+    html = page("index.html")
+    assert_includes html, "Hosted on"
+    assert_includes html, "GitHub Pages"
+    assert_includes html, 'href="https://pages.github.com/"'
+    refute_includes html, ">RSS<"
+    refute_includes html, "application/atom+xml"
   end
 
   def test_about_and_travels_have_intentional_interim_copy

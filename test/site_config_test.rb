@@ -21,4 +21,12 @@ class SiteConfigTest < Minitest::Test
     assert_equal "static", CONFIG.dig("backend", "mode")
     assert CONFIG.fetch("features").values.none?
   end
+
+
+  def test_feed_and_developer_trees_are_not_published
+    refute_includes CONFIG.fetch("plugins", []), "jekyll-feed"
+    excludes = CONFIG.fetch("exclude")
+    %w[functions/ test/ docs/].each { |path| assert_includes excludes, path }
+    assert_includes excludes, "assets/data/story_tree.json"
+  end
 end
