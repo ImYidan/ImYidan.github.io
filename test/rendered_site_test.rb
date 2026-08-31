@@ -59,7 +59,7 @@ class RenderedSiteTest < Minitest::Test
       about/index.html
       assets/css/main.css
       assets/data/world.geojson
-      assets/favicon.svg
+      assets/favicon.png
       assets/js/bubble-pack.js
       assets/js/experience.js
       assets/js/main.js
@@ -78,6 +78,12 @@ class RenderedSiteTest < Minitest::Test
       refute forbidden_prefixes.any? { |prefix| artifact.start_with?(prefix) }, artifact
       refute_includes forbidden_names, artifact
     end
+  end
+
+  def test_browser_tab_uses_the_penguin_png_favicon
+    html = page("index.html")
+    assert_includes html, '<link rel="icon" href="/assets/favicon.png" type="image/png">'
+    assert File.size(File.join(DESTINATION, "assets/favicon.png")).positive?
   end
 
   def test_navigation_is_progressively_enhanced
