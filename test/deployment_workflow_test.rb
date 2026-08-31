@@ -2,6 +2,7 @@ require "minitest/autorun"
 
 class DeploymentWorkflowTest < Minitest::Test
   WORKFLOW = File.expand_path("../.github/workflows/deploy-github-pages.yml", __dir__)
+  LOCKFILE = File.expand_path("../Gemfile.lock", __dir__)
 
   def test_pages_workflow_has_required_contract
     assert File.file?(WORKFLOW), "GitHub Pages workflow is missing"
@@ -13,5 +14,9 @@ class DeploymentWorkflowTest < Minitest::Test
     assert_includes yaml, "actions/configure-pages@v5"
     assert_includes yaml, "actions/upload-pages-artifact@v3"
     assert_includes yaml, "actions/deploy-pages@v5"
+  end
+
+  def test_lockfile_declares_linux_platform_for_pages_build
+    assert_includes File.read(LOCKFILE), "x86_64-linux"
   end
 end
