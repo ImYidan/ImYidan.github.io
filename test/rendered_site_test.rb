@@ -23,11 +23,22 @@ class RenderedSiteTest < Minitest::Test
     File.read(File.join(DESTINATION, path))
   end
 
+  def generated_html_routes
+    self.class.build_site
+    Dir.glob(File.join(DESTINATION, "**", "*.html")).map do |path|
+      "/#{path.delete_prefix("#{DESTINATION}/").sub(%r{index\.html\z}, "")}"
+    end.sort
+  end
+
   def test_home_has_only_first_release_sections
     html = page("index.html")
     assert_includes html, "A small corner of my world."
     %w[About Experience Travels].each { |label| assert_includes html, label }
     %w[Guestbook Bookshelf Recipes Journal].each { |label| refute_includes html, label }
+  end
+
+  def test_generated_html_routes_are_only_the_first_release_pages
+    assert_equal %w[/ /about/ /experience/ /travels/], generated_html_routes
   end
 
   def test_experience_has_exact_degrees_and_safe_school_links
@@ -44,5 +55,21 @@ class RenderedSiteTest < Minitest::Test
     assert_includes travels, "Travel notes are coming soon."
     refute_includes travels, "Paris"
     refute_includes travels, "/api"
+  end
+
+  def test_theme_control_labels_are_english
+    script = File.read(File.join(ROOT, "assets/js/main.js"))
+    [
+      "Switch to warm paper theme",
+      "Switch to dark theme",
+      "Disable automatic theme",
+      "Enable automatic theme",
+      "Following system theme",
+      "Use system theme"
+    ].each { |label| assert_includes script, label }
+
+    %w[切换为暖纸配色 切换为暗色配色 取消自动配色 启用自动配色 正在跟随系统配色 启用系统配色].each do |label|
+      refute_includes script, label
+    end
   end
 end

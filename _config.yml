@@ -115,6 +115,13 @@ exclude:
   - jekyll-dev.err.log
   - _site_verify/
   - _site_dev/
+  - pages/bookshelf/
+  - pages/friends/
+  - pages/message/
+  - pages/posts/
+  - pages/recipes/
+  - pages/writing/
+  - content/_posts/
 
 sass:
   style: compressed

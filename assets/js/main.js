@@ -85,7 +85,7 @@
     }
     var isCool = theme === "cool";
     toggle.setAttribute("aria-pressed", String(isCool));
-    toggle.setAttribute("aria-label", isCool ? "切换为暖纸配色" : "切换为暗色配色");
+    toggle.setAttribute("aria-label", isCool ? "Switch to warm paper theme" : "Switch to dark theme");
   }
 
   var saved = localStorage.getItem("theme");
@@ -98,8 +98,8 @@
     followsSystem = isAuto;
     root.dataset.themeMode = isAuto ? "auto" : "manual";
     autoToggle.setAttribute("aria-pressed", String(isAuto));
-    autoToggle.setAttribute("aria-label", isAuto ? "取消自动配色" : "启用自动配色");
-    autoToggle.title = isAuto ? "正在跟随系统配色" : "启用系统配色";
+    autoToggle.setAttribute("aria-label", isAuto ? "Disable automatic theme" : "Enable automatic theme");
+    autoToggle.title = isAuto ? "Following system theme" : "Use system theme";
     toggle.setAttribute("aria-hidden", String(isAuto));
   }
 
