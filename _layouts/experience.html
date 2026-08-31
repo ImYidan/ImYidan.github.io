@@ -32,7 +32,14 @@ layout: default
           {% assign sub_count = detail_parts | size %}
           <li class="timeline__item" id="exp-{{ forloop.index }}">
             {% if date != '' %}<span class="timeline__date">{{ date }}</span>{% endif %}
-            <div class="timeline__title-row"><h3 class="timeline__title"><span class="timeline__org">{{ org }}</span>{% if role != '' %}<span class="timeline__role">{{ role }}</span>{% endif %}</h3>{% if sub_count > 1 %}<button class="timeline__toggle" type="button" aria-expanded="false" aria-controls="exp-projects-{{ forloop.index }}" aria-label="Expand project experience"><svg class="timeline__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></button>{% endif %}</div>
+            <div class="timeline__title-row"><h3 class="timeline__title">{% assign org_url = site.data.experience_links[org] %}
+<span class="timeline__org">
+  {% if org_url %}
+    <a href="{{ org_url }}" target="_blank" rel="noopener noreferrer">{{ org }} <span aria-hidden="true">↗</span></a>
+  {% else %}
+    {{ org }}
+  {% endif %}
+</span>{% if role != '' %}<span class="timeline__role">{{ role }}</span>{% endif %}</h3>{% if sub_count > 1 %}<button class="timeline__toggle" type="button" aria-expanded="false" aria-controls="exp-projects-{{ forloop.index }}" aria-label="Expand project experience"><svg class="timeline__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg></button>{% endif %}</div>
             {% assign intro = detail_parts[0] | strip %}{% if intro != '' %}<div class="timeline__detail">{{ intro }}</div>{% endif %}
             {% if sub_count > 1 %}<div class="timeline__projects" id="exp-projects-{{ forloop.index }}"><div class="timeline__projects-inner"><ul class="projects">{% for sub in detail_parts offset:1 %}{% assign sub_block = sub | strip %}{% if sub_block != '' %}{% assign sub_parts = sub_block | split: '</h2>' %}<li class="project"><h4 class="project__title">{{ sub_parts[0] | split: '>' | last | strip }}</h4><div class="project__content">{{ sub_parts[1] | strip }}</div></li>{% endif %}{% endfor %}</ul></div></div>{% endif %}
           </li>

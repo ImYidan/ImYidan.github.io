@@ -6,6 +6,15 @@ accent: matcha
 eyebrow: Travels
 permalink: /travels/
 ---
+{% assign travel_notebook = site.travels | where: "slug", "notebook" | first %}
+{% assign travel_content = travel_notebook.content | default: "" | strip %}
+{% if travel_content == "" %}
+  <section class="empty-state travel-empty-state">
+    <div class="empty-state__icon" aria-hidden="true">⌖</div>
+    <h2>Travel notes are coming soon.</h2>
+    <p>This map will grow with the places and moments worth remembering.</p>
+  </section>
+{% else %}
 <div class="travel-page-loading" id="travel-page-loading">
   <div class="travel-page-loading__inner">
     <div class="travel-page-loading__spinner"></div>
@@ -102,3 +111,4 @@ permalink: /travels/
 <script src="{{ '/assets/js/travels-map.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/js/travels-summary.js' | relative_url }}" defer></script>
 {% if site.features.travel_rankings %}<script src="{{ '/assets/js/travels-rankings.js' | relative_url }}" defer></script>{% endif %}
+{% endif %}

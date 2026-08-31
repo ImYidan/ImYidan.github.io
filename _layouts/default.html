@@ -2,8 +2,8 @@
 <html lang="{{ page.lang | default: site.lang | default: 'en' }}">
 {% include head.html %}
 <body class="page--{{ page.section | default: 'default' }}" data-palette="{{ site.palette | default: 'paper' }}"
-      data-backend-mode="{{ site.backend.mode | default: 'demo' }}"
-      data-api-base="{{ site.backend.api_base | default: '/api' }}">
+      data-backend-mode="{{ site.backend.mode | default: 'demo' }}"{% unless site.backend.mode == 'static' %}
+      data-api-base="{{ site.backend.api_base | default: '/api' }}"{% endunless %}>
   {% include nav.html %}
 
   <main id="main" class="site-main">

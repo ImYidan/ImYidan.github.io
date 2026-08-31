@@ -3,7 +3,7 @@ layout: experience
 title: Experience
 section: experience
 accent: sora
-eyebrow: Experience
-subtitle: A timeline of work, study, and projects.
+eyebrow: My journey
+subtitle: A timeline of the places where I have studied, learned, and built.
 permalink: /experience/
 ---

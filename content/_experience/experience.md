@@ -3,26 +3,14 @@ title: experience
 section: experience
 ---
 
-# Acme Corp [2023 - Present] Software Engineer
+# Imperial College London [2025 - 2026] MSc AI² EEE
 
-Built and maintained web applications. Worked on frontend architecture, performance optimization, and developer tooling.
+Exploring ideas across artificial intelligence and engineering.
 
-## Design system
+Selected projects and highlights will be added here soon.
 
-Built reusable interface foundations and documented interaction patterns for product teams.
+# Jinan University [2021 - 2025] BSc CS Computing
 
-## Performance work
+Built a foundation in computing, software, and problem solving.
 
-Reduced page weight and improved rendering performance across frequently visited screens.
-
-# University of Somewhere [2019 - 2023] B.S. Computer Science
-
-Studied algorithms, systems, and human-computer interaction. Graduated with honors.
-
-## Capstone project
-
-Designed and evaluated a collaborative research tool with a small interdisciplinary team.
-
-# Open Source Project [2022 - Present] Maintainer
-
-A small but useful library. Learned about community management, semantic versioning, and documentation.
+Selected experiences and projects will be added here soon.

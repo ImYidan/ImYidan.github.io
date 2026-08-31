@@ -2,9 +2,9 @@
 layout: about
 title: About
 section: about
-accent: sakura
+accent: sora
 eyebrow: About
-lead: A few words about this blog and the person behind it.
+lead: A few words about me.
 permalink: /about/
-initial: "?"
+initial: "Y"
 ---

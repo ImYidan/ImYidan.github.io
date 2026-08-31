@@ -12,7 +12,6 @@ layout: default
           <a class="hero__link hero__link--{{ link.accent | default: 'sakura' }}"
              href="{{ link.path | relative_url }}">{{ link.label }}</a>
         {% endfor %}
-        <span class="home-stats__visits">Visited <span id="home-visit-count">?</span> times</span>
       </div>
     {% endif %}
   </div>
@@ -24,8 +23,8 @@ layout: default
       {% for item in site.nav %}
         {% case item.key %}
           {% when 'about' %}{% assign card_desc = 'A short introduction' %}
-          {% when 'experience' %}{% assign card_desc = 'Work, study, and projects' %}
-          {% when 'travels' %}{% assign card_desc = 'Cities visited and memories made' %}
+          {% when 'experience' %}{% assign card_desc = 'Study, projects, and what comes next' %}
+          {% when 'travels' %}{% assign card_desc = 'Places visited and memories kept' %}
           {% when 'bookshelf' %}{% assign card_desc = 'Books read, with short notes' %}
           {% when 'writing' %}{% assign card_desc = 'Articles, notes, and reflections' %}
           {% when 'posts' %}{% assign card_desc = 'Essays and recent field notes' %}
