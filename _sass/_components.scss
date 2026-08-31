@@ -1392,7 +1392,7 @@ mark.post-search-hit {
   top: 8px;
   bottom: 8px;
   width: 2px;
-  background: linear-gradient(to bottom, var(--sora) 0%, var(--sora-soft) 100%);
+  background: linear-gradient(to bottom, var(--accent) 0%, var(--accent-soft) 100%);
   border-radius: 1px;
 }
 .timeline__item {
@@ -1409,9 +1409,9 @@ mark.post-search-hit {
   width: 16px;
   height: 16px;
   background: var(--surface);
-  border: 3px solid var(--sora);
+  border: 3px solid var(--accent);
   border-radius: 50%;
-  box-shadow: 0 0 0 4px var(--sora-soft);
+  box-shadow: 0 0 0 4px var(--accent-soft);
 }
 .timeline__date {
   font-family: $font-mono;
@@ -1431,7 +1431,16 @@ mark.post-search-hit {
   gap: $space-3;
 }
 .timeline__org {
-  color: var(--sakura-ink);
+  color: var(--sora-ink);
+}
+.timeline__org a {
+  color: inherit;
+  border-bottom: 2px solid var(--accent);
+  text-decoration: none;
+  text-underline-offset: 0.18em;
+}
+.timeline__org a:hover {
+  background: var(--accent-soft);
 }
 .timeline__role {
   color: var(--sumire-ink);
@@ -1441,7 +1450,7 @@ mark.post-search-hit {
   color: var(--ink-soft);
   line-height: $lh-relaxed;
 }
-/* —— 标题行 + 粉色展开按钮 —— */
+/* —— 标题行 + 展开按钮 —— */
 .timeline__title-row:has(.timeline__toggle) {
   cursor: pointer;
 }
@@ -1454,11 +1463,11 @@ mark.post-search-hit {
   background: none;
   border: none;
   padding: 0;
-  color: var(--sakura);
+  color: var(--accent);
   transition: color $dur-base $ease;
 }
 .timeline__title-row:hover .timeline__toggle {
-  color: var(--sakura-ink);
+  color: var(--sora-ink);
 }
 .timeline__chevron {
   stroke-width: 2.5;
@@ -1494,7 +1503,7 @@ mark.post-search-hit {
   gap: $space-4;
 }
 .project {
-  border-left: 3px solid var(--project-accent, var(--sakura));
+  border-left: 3px solid var(--project-accent, var(--accent));
   padding-left: $space-4;
 }
 .project__title {
@@ -2024,6 +2033,29 @@ mark.post-search-hit {
   color: var(--accent, var(--sakura));
   opacity: 0.4;
   margin-bottom: $space-3;
+}
+.travel-empty-state {
+  max-width: $width-narrow;
+  margin: $space-7 auto;
+  padding: $space-7 $space-6;
+  border: 1px solid var(--accent);
+  border-radius: $radius-lg;
+  background: var(--accent-soft);
+  box-shadow: var(--shadow-sm);
+}
+.travel-empty-state h2 {
+  color: var(--ink);
+  margin-bottom: $space-3;
+}
+.travel-empty-state p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+@media (max-width: 768px) {
+  .travel-empty-state {
+    margin-block: $space-5;
+    padding: $space-6 $space-5;
+  }
 }
 
 /* ════════════ 食谱笔记本（卡片 + 多 chip 搜索）════════════ */

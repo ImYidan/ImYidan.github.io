@@ -59,8 +59,8 @@
   --sumire-ink:  #{$sumire-ink};
 
   // —— 全站默认强调色（被页面级 inline 重写）——
-  --accent:       #{$sakura};
-  --accent-soft:  #{$sakura-soft};
+  --accent:       var(--sora);
+  --accent-soft:  var(--sora-soft);
 
   // 字体
   --font-serif: #{$font-serif};
@@ -140,9 +140,9 @@
   --sumire: #7B68B5; --sumire-soft: #29213F; --sumire-ink: #B6A1E4;
 }
 
-body.page--about      { --accent: var(--sakura);  --accent-soft: var(--sakura-soft);  }
+body.page--about      { --accent: var(--sora);    --accent-soft: var(--sora-soft);    }
 body.page--experience { --accent: var(--sora);    --accent-soft: var(--sora-soft);    }
-body.page--travels    { --accent: var(--sakura);  --accent-soft: var(--sakura-soft);  }
+body.page--travels    { --accent: var(--sora);    --accent-soft: var(--sora-soft);    }
 body.page--bookshelf  { --accent: var(--yuzu);    --accent-soft: var(--yuzu-soft);    }
 body.page--writing    { --accent: var(--sora);    --accent-soft: var(--sora-soft);    }
 body.page--posts      { --accent: var(--sumire);  --accent-soft: var(--sumire-soft);  }
