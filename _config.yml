@@ -2,21 +2,19 @@
 #  Site configuration
 # ════════════════════════════════════════════════════════════
 
-title: My Blog
-tagline: A quiet place for words and memories.
-description: >-
-  A personal blog template built with Jekyll.
-  About, experience, travels, bookshelf, writing, and recipes.
+title: Yidan
+tagline: Notes on life, learning, and places along the way.
+description: Yidan's personal website — experience, travels, and notes from the journey.
 
 # For project sites, set baseurl to "/your-repo-name".
 # For user/org sites (user.github.io), set to "".
 baseurl: ""
-url: ""
+url: "https://imyidan.github.io"
 
 author:
-  name: Your Name
-  email: you@example.com
-  github: ""
+  name: Yidan
+  email: ""
+  github: ImYidan
   twitter: ""
   instagram: ""
 
@@ -50,15 +48,15 @@ permalink: /posts/:title/
 # Set backend.mode to "cloudflare" after creating the D1 database described in
 # README.md.
 features:
-  posts: true
-  home_stats: true
-  guestbook: true
-  guestbook_likes: true
-  story_tree: true
-  travel_rankings: true
+  posts: false
+  home_stats: false
+  guestbook: false
+  guestbook_likes: false
+  story_tree: false
+  travel_rankings: false
 
 backend:
-  mode: auto # auto | demo | cloudflare
+  mode: static
   api_base: /api
 
 # All collections live under content/ for a clean root.
@@ -130,12 +128,6 @@ sass:
 logo: /assets/favicon.svg
 
 nav:
-  - { key: "about",      label: "About",      path: "/about/",      accent: "sakura"  }
-  - { key: "experience", label: "Experience", path: "/experience/", accent: "sora"    }
-  - { key: "travels",    label: "Travels",    path: "/travels/",    accent: "matcha"  }
-  - { key: "bookshelf",  label: "Bookshelf",  path: "/bookshelf/",  accent: "yuzu"    }
-  - { key: "recipes",    label: "Recipes",    path: "/recipes/",    accent: "sakura"  }
-  - { key: "writing",    label: "Writing",    path: "/writing/",    accent: "sumire"  }
-  - { key: "posts",      label: "Journal",    path: "/posts/",      accent: "sumire"  }
-  - { key: "message",    label: "Guestbook",  path: "/message/",    accent: "matcha"  }
-  - { key: "friends",    label: "Friends",    path: "/friends/",    accent: "sora"    }
+  - { key: "about", label: "About", path: "/about/", accent: "sora" }
+  - { key: "experience", label: "Experience", path: "/experience/", accent: "sora" }
+  - { key: "travels", label: "Travels", path: "/travels/", accent: "sora" }
