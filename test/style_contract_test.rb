@@ -31,6 +31,15 @@ class StyleContractTest < Minitest::Test
     assert_match(/--accent-soft:\s*var\(--sora-soft\)/, root)
   end
 
+  def test_dark_theme_keeps_sora_cornflower_blue
+    main = source("assets/css/main.scss")
+    dark_theme_blocks = main.scan(/\[data-theme="cool"\]\s*\{\n.*?^\}/m)
+    assert_operator dark_theme_blocks.length, :>=, 1
+    dark_theme_blocks.each do |block|
+      assert_match(/--sora:\s*#4F6FD8;/, block)
+    end
+  end
+
   def test_timeline_uses_page_accent_not_sakura
     components = source("_sass/_components.scss")
     timeline = components[/\.timeline__item\s*\{.*?\.timeline__projects/m]

@@ -37,6 +37,11 @@ class RenderedSiteTest < Minitest::Test
     %w[Guestbook Bookshelf Recipes Journal].each { |label| refute_includes html, label }
   end
 
+  def test_home_uses_the_sora_accent
+    html = page("index.html")
+    assert_includes html, "<style>:root { --accent: var(--sora); --accent-soft: var(--sora-soft); }</style>"
+  end
+
   def test_generated_html_routes_are_only_the_first_release_pages
     assert_equal %w[/ /about/ /experience/ /travels/], generated_html_routes
   end
