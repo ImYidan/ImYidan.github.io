@@ -111,8 +111,8 @@ class RenderedSiteTest < Minitest::Test
   end
   def test_png_favicon_and_absence_of_rss_are_preserved
     html = page("index.html")
-    assert_includes html, '<link rel="icon" href="/assets/favicon.png" type="image/png">'
-    assert File.size(File.join(DESTINATION, "assets/favicon.png")).positive?
+    assert_includes html, '<link rel="icon" href="/assets/favicon-gold.png" type="image/png">'
+    assert File.size(File.join(DESTINATION, "assets/favicon-gold.png")).positive?
     refute_includes html, ">RSS<"
     refute_includes html, "application/atom+xml"
   end

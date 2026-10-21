@@ -152,7 +152,7 @@ sass:
 #  Each accent must be one of: sakura / sora / matcha / yuzu / sumire.
 # ════════════════════════════════════════════════════════════
 
-logo: /assets/favicon.png
+logo: /assets/favicon-gold.png
 
 nav:
   - { key: "about", label: "About", path: "/about/", accent: "sora" }
