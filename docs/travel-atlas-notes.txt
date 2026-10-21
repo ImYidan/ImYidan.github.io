@@ -1,0 +1,13 @@
+旅行足迹地图
+
+数据文件：assets/data/travel-footprints.json
+中国省级边界：阿里云 DataV.GeoAtlas https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json
+世界边界：沿用用户原始网站 assets/data/world.geojson，atlas-world.geojson 为减小体积的派生版本。
+D3 7.9.0：https://github.com/d3/d3 （ISC 许可，见 assets/vendor/d3.LICENSE）
+
+本地检查：node _scripts/check-travel-atlas.cjs
+本地预览：python3 _scripts/preview.py
+
+界面：默认球面，可拖动旋转、暂停；平面可缩放平移；区域切换到中国、欧洲、中东时使用平面；点击地区显示用户提供的地点。
+数据归档：乌镇归入浙江，顺德在广东清单中保留为独立旅行地点；比利时记录布鲁塞尔；葡萄牙记录里斯本。
+统计：8 个国家，14 个中国省级区域。香港记在中国省级区域之中。

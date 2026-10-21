@@ -1,0 +1,187 @@
+{
+  "provinces": [
+    {
+      "code": "320000",
+      "name": "江苏",
+      "places": [
+        "扬州",
+        "南京",
+        "苏州"
+      ]
+    },
+    {
+      "code": "330000",
+      "name": "浙江",
+      "places": [
+        "杭州",
+        "乌镇"
+      ]
+    },
+    {
+      "code": "310000",
+      "name": "上海",
+      "places": [
+        "上海"
+      ]
+    },
+    {
+      "code": "810000",
+      "name": "香港",
+      "places": [
+        "香港"
+      ]
+    },
+    {
+      "code": "440000",
+      "name": "广东",
+      "places": [
+        "广州",
+        "珠海",
+        "佛山",
+        "顺德",
+        "清远"
+      ]
+    },
+    {
+      "code": "110000",
+      "name": "北京",
+      "places": [
+        "北京"
+      ]
+    },
+    {
+      "code": "120000",
+      "name": "天津",
+      "places": [
+        "天津"
+      ]
+    },
+    {
+      "code": "370000",
+      "name": "山东",
+      "places": [
+        "青岛"
+      ]
+    },
+    {
+      "code": "350000",
+      "name": "福建",
+      "places": [
+        "厦门"
+      ]
+    },
+    {
+      "code": "510000",
+      "name": "四川",
+      "places": [
+        "成都",
+        "九寨沟"
+      ]
+    },
+    {
+      "code": "530000",
+      "name": "云南",
+      "places": [
+        "昆明",
+        "香格里拉",
+        "大理"
+      ]
+    },
+    {
+      "code": "230000",
+      "name": "黑龙江",
+      "places": [
+        "哈尔滨"
+      ]
+    },
+    {
+      "code": "220000",
+      "name": "吉林",
+      "places": [
+        "长春"
+      ]
+    },
+    {
+      "code": "210000",
+      "name": "辽宁",
+      "places": [
+        "沈阳"
+      ]
+    }
+  ],
+  "countries": [
+    {
+      "key": "China",
+      "name": "中国",
+      "english": "CHINA",
+      "region": "china",
+      "places": []
+    },
+    {
+      "key": "United Kingdom",
+      "name": "英国",
+      "english": "UNITED KINGDOM",
+      "region": "europe",
+      "places": [
+        "伦敦",
+        "爱丁堡",
+        "贝尔法斯特"
+      ]
+    },
+    {
+      "key": "Italy",
+      "name": "意大利",
+      "english": "ITALY",
+      "region": "europe",
+      "places": [
+        "威尼斯"
+      ]
+    },
+    {
+      "key": "Spain",
+      "name": "西班牙",
+      "english": "SPAIN",
+      "region": "europe",
+      "places": [
+        "马略卡"
+      ]
+    },
+    {
+      "key": "Belgium",
+      "name": "比利时",
+      "english": "BELGIUM",
+      "region": "europe",
+      "places": [
+        "布鲁塞尔"
+      ]
+    },
+    {
+      "key": "France",
+      "name": "法国",
+      "english": "FRANCE",
+      "region": "europe",
+      "places": [
+        "巴黎"
+      ]
+    },
+    {
+      "key": "Portugal",
+      "name": "葡萄牙",
+      "english": "PORTUGAL",
+      "region": "europe",
+      "places": [
+        "里斯本"
+      ]
+    },
+    {
+      "key": "United Arab Emirates",
+      "name": "阿联酋",
+      "english": "UNITED ARAB EMIRATES",
+      "region": "middle-east",
+      "places": [
+        "迪拜",
+        "阿布扎比"
+      ]
+    }
+  ]
+}

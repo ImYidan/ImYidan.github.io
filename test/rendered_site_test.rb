@@ -1,147 +1,110 @@
 require "fileutils"
 require "minitest/autorun"
 require "open3"
-
+require "json"
 class RenderedSiteTest < Minitest::Test
   ROOT = File.expand_path("..", __dir__)
   DESTINATION = File.join(ROOT, "_site_test")
-
   def self.build_site
     return if defined?(@built) && @built
     FileUtils.rm_rf(DESTINATION)
     stdout, stderr, status = Open3.capture3(
       { "JEKYLL_ENV" => "production", "BLOG_BACKEND_MODE" => "static" },
-      "bundle", "exec", "jekyll", "build", "--destination", DESTINATION,
-      chdir: ROOT
-    )
+      "bundle", "exec", "jekyll", "build", "--destination", DESTINATION, chdir: ROOT)
     raise "Jekyll build failed:\n#{stdout}\n#{stderr}" unless status.success?
     @built = true
   end
-
   def page(path)
     self.class.build_site
     File.read(File.join(DESTINATION, path))
   end
-
-  def generated_html_routes
-    self.class.build_site
-    Dir.glob(File.join(DESTINATION, "**", "*.html")).map do |path|
-      "/#{path.delete_prefix("#{DESTINATION}/").sub(%r{index\.html\z}, "")}"
-    end.sort
-  end
-
   def generated_artifacts
     self.class.build_site
     Dir.glob(File.join(DESTINATION, "**", "*"), File::FNM_DOTMATCH).filter_map do |path|
-      next unless File.file?(path)
-      path.delete_prefix("#{DESTINATION}/")
+      path.delete_prefix("#{DESTINATION}/") if File.file?(path)
     end.sort
   end
-
-  def test_home_has_only_first_release_sections
+  def test_only_four_public_html_routes_are_generated
+    self.class.build_site
+    routes = Dir.glob(File.join(DESTINATION, "**", "*.html")).map do |path|
+      "/#{path.delete_prefix("#{DESTINATION}/").sub(%r{index\.html\z}, "")}"
+    end.sort
+    assert_equal %w[/ /about/ /experience/ /travels/], routes
+  end
+  def test_home_uses_approved_identity_signature_and_navigation
     html = page("index.html")
-    assert_includes html, "A small corner of my world."
-    %w[About Experience Travels].each { |label| assert_includes html, label }
-    %w[Guestbook Bookshelf Recipes Journal].each { |label| refute_includes html, label }
+    assert_includes html, "Create Abundance <em>or die trying</em>"
+    assert_includes html, '<span class="brand-emblem">W<span>'
+    assert_includes html, "signature-original.png"
+    %w[/about/ /experience/ /travels/].each { |path| assert_includes html, "href=\"#{path}\"" }
+    assert_includes html, 'lang="zh-CN"'
+    refute_includes html, "A small corner of my world."
+    refute_includes html, "theme-toggle"
   end
-
-  def test_home_uses_the_sora_accent
+  def test_navigation_supports_javascript_and_no_javascript
     html = page("index.html")
-    assert_includes html, "<style>:root { --accent: var(--sora); --accent-soft: var(--sora-soft); }</style>"
+    assert_includes html, '<html class="no-js" lang="zh-CN">'
+    assert_includes html, 'document.documentElement.classList.replace("no-js","js");'
+    assert_includes html, 'aria-controls="navigation" aria-expanded="false"'
+    assert_includes html, '<nav id="navigation" aria-label="主导航">'
+    script = page("assets/js/blackgold.js")
+    assert_includes script, "button.setAttribute('aria-expanded', String(open));"
+    assert_includes script, "event.key === 'Escape'"
   end
-
-  def test_generated_html_routes_are_only_the_first_release_pages
-    assert_equal %w[/ /about/ /experience/ /travels/], generated_html_routes
+  def test_about_contains_biography_safe_advisor_links_and_contacts
+    html = page("about/index.html")
+    assert_includes html, "我是王怡丹，也可以叫我 Eden"
+    assert_includes html, "我总会想起八月的伦敦。"
+    assert_includes html, "循此苦旅"
+    assert_includes html, "以达繁星"
+    %w[https://the-duck-lab.github.io/members/Eleonora_Giunchiglia.html https://cuilin.antlab.network/ https://x.com/Eden_SJTU https://www.instagram.com/yidannwang/].each do |url|
+      assert_match(/href="#{Regexp.escape(url)}"[^>]*target="_blank"[^>]*rel="noopener noreferrer"/, html)
+    end
+    assert_includes html, 'href="mailto:wangyidan752@gmail.com"'
+    assert_includes html, "yidan-portrait-blackgold-v1.png"
   end
-
-  def test_generated_artifact_is_the_exact_first_release_surface
-    expected = %w[
-      about/index.html
-      assets/css/main.css
-      assets/data/world.geojson
-      assets/favicon.png
-      assets/js/bubble-pack.js
-      assets/js/experience.js
-      assets/js/main.js
-      assets/js/travels-map.js
-      assets/js/travels-summary.js
-      assets/js/travels.js
-      experience/index.html
-      index.html
-      travels/index.html
-    ]
-    assert_equal expected, generated_artifacts
-
-    forbidden_prefixes = %w[docs/ functions/ test/]
-    forbidden_names = %w[feed.xml]
-    generated_artifacts.each do |artifact|
-      refute forbidden_prefixes.any? { |prefix| artifact.start_with?(prefix) }, artifact
-      refute_includes forbidden_names, artifact
+  def test_experience_preserves_degrees_links_and_folded_projects
+    html = page("experience/index.html")
+    ["MSc AI² EEE", "BSc CS Computing", "GUANGZHOU, CHINA", "行至，<em>此间。</em>"].each { |text| assert_includes html, text }
+    %w[https://www.imperial.ac.uk/ https://www.jnu.edu.cn/].each do |url|
+      assert_match(/href="#{Regexp.escape(url)}"[^>]*target="_blank"[^>]*rel="noopener noreferrer"/, html)
+    end
+    assert_equal 4, html.scan('name="imperial-projects"').length
+    assert_equal 5, html.scan('name="jinan-projects"').length
+    refute_match(/<details[^>]*\bopen\b/, html)
+    assert_includes html, "big-ben-gold-line.svg"
+    assert_includes html, "canton-tower-gold-line.svg"
+    assert_includes html, "2026.02 — 2026.03"
+  end
+  def test_travel_has_eight_countries_and_fourteen_provincial_regions
+    html = page("travels/index.html")
+    data = JSON.parse(page("assets/data/travel-footprints.json"))
+    assert_equal 8, data.fetch("countries").length
+    assert_equal 14, data.fetch("provinces").length
+    assert_equal %w[江苏 浙江 上海 香港 广东], data.fetch("provinces").first(5).map { |p| p.fetch("name") }
+    assert_equal %w[黑龙江 吉林 辽宁], data.fetch("provinces").last(3).map { |p| p.fetch("name") }
+    assert_includes html, "布鲁塞尔"
+    assert_includes html, "里斯本"
+    assert_includes html, 'id="atlas-flat"'
+    assert_includes html, 'id="atlas-rotation"'
+    assert_includes html, 'aria-label="地图区域"'
+    assert_includes html, "<noscript>"
+    refute_match(/<details class="travel-record-group" open>/, html)
+    refute_includes html, "/api"
+  end
+  def test_assets_exist_and_private_development_files_are_not_published
+    required = %w[assets/css/blackgold.css assets/js/blackgold.js assets/js/travel-atlas.js assets/vendor/d3.min.js assets/vendor/d3.LICENSE assets/data/atlas-world.geojson assets/data/china-provinces.geojson assets/data/travel-footprints.json assets/images/signature-original.png assets/images/yidan-portrait-blackgold-v1.png assets/images/about-gilded-landscape-v1.png assets/images/big-ben-gold-line.svg assets/images/canton-tower-gold-line.svg assets/images/experience-rose-window.svg assets/images/travel-gilded-star-chart.svg]
+    required.each { |path| assert_includes generated_artifacts, path }
+    generated_artifacts.each do |path|
+      refute_match(%r{\A(?:docs/|functions/|test/|sample_data/|_scripts/|vendor/|\.git/)}, path)
+      refute_match(/(?:\.env|\.local|\.log)\z/, path)
     end
   end
-
-  def test_browser_tab_uses_the_penguin_png_favicon
+  def test_png_favicon_and_absence_of_rss_are_preserved
     html = page("index.html")
     assert_includes html, '<link rel="icon" href="/assets/favicon.png" type="image/png">'
     assert File.size(File.join(DESTINATION, "assets/favicon.png")).positive?
-  end
-
-  def test_navigation_is_progressively_enhanced
-    html = page("index.html")
-    assert_match(/<html[^>]*class="no-js"/, html)
-    assert_includes html, 'document.documentElement.classList.replace("no-js", "js");'
-    assert_match(/<button[^>]*class="site-nav__toggle"[^>]*aria-expanded="false"[^>]*aria-controls="site-nav__list"/, html)
-    assert_match(/<ul class="site-nav__list" id="site-nav__list">/, html,
-                 "navigation links must not be hidden in server-rendered markup")
-
-    css = page("assets/css/main.css")
-    assert_match(/\.site-nav__toggle\{display:none\}/, css)
-    assert_match(/@media\(max-width:\s*1100px\).*?\.js \.site-nav__toggle\{display:inline-flex/m, css)
-
-    script = page("assets/js/main.js")
-    assert_includes script, "list.hidden = isMobile && !isOpen;"
-    assert_includes script, 'toggle.setAttribute("aria-expanded", String(isOpen));'
-    assert_includes script, 'list.classList.toggle("is-open", isOpen);'
-  end
-
-  def test_experience_has_exact_degrees_and_safe_school_links
-    html = page("experience/index.html")
-    assert_includes html, "MSc AI² EEE"
-    assert_includes html, "BSc CS Computing"
-    assert_match(/href="https:\/\/www\.imperial\.ac\.uk\/"[^>]*target="_blank"[^>]*rel="noopener noreferrer"/, html)
-    assert_match(/href="https:\/\/www\.jnu\.edu\.cn\/"[^>]*target="_blank"[^>]*rel="noopener noreferrer"/, html)
-  end
-
-  def test_footer_identifies_github_pages_hosting_without_rss
-    html = page("index.html")
-    assert_includes html, "Hosted on"
-    assert_includes html, "GitHub Pages"
-    assert_includes html, 'href="https://pages.github.com/"'
     refute_includes html, ">RSS<"
     refute_includes html, "application/atom+xml"
-  end
-
-  def test_about_and_travels_have_intentional_interim_copy
-    assert_includes page("about/index.html"), "This page is taking shape."
-    travels = page("travels/index.html")
-    assert_includes travels, "Travel notes are coming soon."
-    refute_includes travels, "Paris"
-    refute_includes travels, "/api"
-  end
-
-  def test_theme_control_labels_are_english
-    script = File.read(File.join(ROOT, "assets/js/main.js"))
-    [
-      "Switch to warm paper theme",
-      "Switch to dark theme",
-      "Disable automatic theme",
-      "Enable automatic theme",
-      "Following system theme",
-      "Use system theme"
-    ].each { |label| assert_includes script, label }
-
-    %w[切换为暖纸配色 切换为暗色配色 取消自动配色 启用自动配色 正在跟随系统配色 启用系统配色].each do |label|
-      refute_includes script, label
-    end
   end
 end

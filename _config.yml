@@ -18,7 +18,7 @@ author:
   twitter: ""
   instagram: ""
 
-lang: en
+lang: zh-CN
 
 # Palette: paper | mist | sand | sage | ink | dusk
 #   paper -- warm cream background (default)
@@ -87,13 +87,13 @@ defaults:
       type: "pages"
     values:
       layout: "page"
-      lang: en
+      lang: zh-CN
   - scope:
       path: ""
       type: "posts"
     values:
       layout: "post"
-      lang: en
+      lang: zh-CN
       section: posts
 
 exclude:

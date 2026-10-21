@@ -9,7 +9,7 @@ class SiteConfigTest < Minitest::Test
     assert_equal "Yidan", CONFIG.dig("author", "name")
     assert_equal "https://imyidan.github.io", CONFIG.fetch("url")
     assert_equal "", CONFIG.fetch("baseurl")
-    assert_equal "en", CONFIG.fetch("lang")
+    assert_equal "zh-CN", CONFIG.fetch("lang")
   end
 
   def test_first_release_navigation
