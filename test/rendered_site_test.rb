@@ -100,6 +100,15 @@ class RenderedSiteTest < Minitest::Test
       refute_match(/(?:\.env|\.local|\.log)\z/, path)
     end
   end
+  def test_public_script_dependencies_are_not_excluded_from_git
+    skip "Source archive has no Git checkout" unless File.directory?(File.join(ROOT, ".git"))
+    scripts = %w[index.html about/index.html experience/index.html travels/index.html].flat_map do |path|
+      page(path).scan(/<script[^>]+src="(\/assets\/[^"?]+)(?:\?[^" ]*)?"/).flatten
+    end.uniq.map { |path| path.delete_prefix("/") }
+    ignored, stderr, status = Open3.capture3("git", "check-ignore", "--no-index", "--stdin", stdin_data: scripts.join("\n") + "\n", chdir: ROOT)
+    assert_includes [0, 1], status.exitstatus, stderr
+    assert_empty ignored, "Public scripts must be included in the release: #{ignored}"
+  end
   def test_png_favicon_and_absence_of_rss_are_preserved
     html = page("index.html")
     assert_includes html, '<link rel="icon" href="/assets/favicon.png" type="image/png">'

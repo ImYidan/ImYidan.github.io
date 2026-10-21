@@ -5,7 +5,7 @@ jekyll-dev.*.log
 .jekyll-cache/
 .jekyll-metadata
 .bundle/
-vendor/
+/vendor/
 *.local
 .env
 .DS_Store
