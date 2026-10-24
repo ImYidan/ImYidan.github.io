@@ -271,3 +271,24 @@ body[data-page="pets"] .pet-portrait figcaption{position:relative;isolation:isol
 body[data-page="pets"] .pet-portrait figcaption:before{content:"";position:absolute;inset:-12px -15px;z-index:-1;background:var(--bg);opacity:.75;filter:blur(12px)}
 @media(max-width:700px){.pet-backdrop-day,.pet-backdrop-night{background-position:82% top;background-size:auto 100%;filter:blur(2px)}.pet-backdrop-night{opacity:.48}[data-theme="light"] .pet-backdrop-day{opacity:.55}}
 @media(prefers-reduced-motion:reduce){.pet-backdrop-day,.pet-backdrop-night{transition:none}}
+
+/* Translucent, frosted panels let the landscape remain part of the page. */
+.interests-section{padding-top:64px;padding-bottom:76px}
+.interests-heading{margin:0 0 34px;font-family:"Noto Serif SC",serif;font-size:36px;font-weight:400;letter-spacing:.05em}
+.interests-heading em{color:var(--gold-light);font-style:italic}
+.interest-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.interest-card{position:relative;min-width:0;padding:30px 32px 32px;border:1px solid rgba(231,213,172,.22);border-radius:18px;background:linear-gradient(135deg,rgba(249,236,205,.08),rgba(15,18,16,.48));backdrop-filter:blur(18px) saturate(1.12);-webkit-backdrop-filter:blur(18px) saturate(1.12);box-shadow:inset 0 1px 0 rgba(255,248,230,.1),0 12px 35px rgba(0,0,0,.12)}
+.interest-card h3{font-family:"Noto Serif SC",serif;font-weight:400;font-size:23px;letter-spacing:.07em;color:var(--gold-light);margin:0 0 24px}
+.interest-card dl{margin:0;display:grid;gap:19px}
+.interest-card dl>div{display:grid;grid-template-columns:108px minmax(0,1fr);gap:14px;align-items:baseline}
+.interest-card dt{font-size:14px;line-height:1.9;color:var(--muted);font-weight:400}
+.interest-card dd{margin:0;font-size:17px;line-height:1.85;color:var(--ink);overflow-wrap:anywhere}
+.interest-wishes dl{gap:32px}
+.interest-wishes .interest-dream{grid-template-columns:1fr;gap:9px;padding-bottom:30px;border-bottom:1px solid var(--line)}
+.interest-dream dd{font-family:"Noto Serif SC",serif;font-size:25px;line-height:1.8}
+.interest-wishes .interest-life-dreams{grid-template-columns:1fr;gap:9px}
+[data-theme="light"] .interest-card{border-color:rgba(255,255,255,.72);background:linear-gradient(135deg,rgba(255,255,255,.62),rgba(251,246,234,.4));box-shadow:inset 0 1px 0 #fff9,0 12px 35px rgba(102,79,41,.06)}
+[data-theme="light"] .interest-card dt{color:#655b4d}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.interest-card{background:rgba(17,19,16,.94)}[data-theme="light"] .interest-card{background:rgba(250,246,237,.94)}}
+@media(max-width:1050px){.interest-card{padding:27px 25px}.interest-card dl>div{grid-template-columns:1fr;gap:3px}.interest-card dl{gap:15px}}
+@media(max-width:700px){.interests-section{padding-top:42px;padding-bottom:45px}.interests-heading{font-size:29px;margin-bottom:25px}.interest-grid{grid-template-columns:1fr;gap:18px}.interest-card{padding:26px 24px;border-radius:15px}.interest-card h3{font-size:22px;margin-bottom:22px}.interest-card dd{font-size:17px}.interest-card dt{font-size:14px}.interest-dream dd{font-size:23px}}
