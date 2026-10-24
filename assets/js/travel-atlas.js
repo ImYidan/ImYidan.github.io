@@ -47,7 +47,6 @@
     const country = countries.get(key);
     if (!country) return;
     selectedKey = key;
-    el('atlas-location-en').textContent = country.english;
     el('atlas-location').textContent = country.name;
     el('atlas-location-note').textContent = key === 'China' ? '14 个省级区域，收藏一路的风景。' : '已经走过，值得记住。';
     placeRows(key === 'China' ? footprints.provinces : [{ name: country.name, places: country.places }]);
@@ -58,7 +57,6 @@
     const province = provinces.get(String(code));
     selectedKey = String(code);
     const feature = china.features.find(f => String(f.properties.adcode) === String(code));
-    el('atlas-location-en').textContent = 'CHINA · PROVINCE & REGION';
     el('atlas-location').textContent = province?.name || feature?.properties.name || '中国';
     el('atlas-location-note').textContent = province ? '这片土地，留下过我的足迹。' : '尚未到访，留给未来的旅程。';
     placeRows(province ? [province] : []);
@@ -75,7 +73,6 @@
     if (feature.properties.name === 'Hong Kong') { setRegion('china'); showProvince('810000'); return; }
     if (countries.has(feature.properties.name)) { showCountry(feature.properties.name); return; }
     selectedKey = feature.properties.name;
-    el('atlas-location-en').textContent = 'SOMEWHERE, SOMEDAY';
     el('atlas-location').textContent = feature.properties.name;
     el('atlas-location-note').textContent = '尚未到访，留给未来的旅程。';
     placeRows([]); el('atlas-drill').hidden = true; paintSelection();

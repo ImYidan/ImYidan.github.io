@@ -1,5 +1,29 @@
 (() => {
   'use strict';
+  const themeButton = document.querySelector('.theme-toggle');
+  const applyTheme = theme => {
+    const light = theme === 'light';
+    document.documentElement.dataset.theme = light ? 'light' : 'dark';
+    if (themeButton) {
+      themeButton.setAttribute('aria-pressed', String(light));
+      const label = light ? '切换到深色模式' : '切换到浅色模式';
+      themeButton.setAttribute('aria-label', label);
+      themeButton.title = label;
+    }
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', light ? '#f4f0e6' : '#090a09');
+  };
+  applyTheme(document.documentElement.dataset.theme);
+  if (themeButton) {
+    themeButton.addEventListener('click', () => {
+      const theme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+      applyTheme(theme);
+      try { localStorage.setItem('yidan-theme', theme); } catch (error) { /* The toggle still works without storage. */ }
+    });
+    themeButton.hidden = false;
+  }
+  window.addEventListener('storage', event => {
+    if (event.key === 'yidan-theme' || event.key === null) applyTheme(event.newValue === 'light' ? 'light' : 'dark');
+  });
   const button = document.querySelector('.menu-toggle');
   const nav = document.querySelector('#navigation');
   const closeMenu = () => {

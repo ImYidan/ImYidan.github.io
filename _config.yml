@@ -155,6 +155,6 @@ sass:
 logo: /assets/favicon-gold.png
 
 nav:
-  - { key: "about", label: "About", path: "/about/", accent: "sora" }
+  - { key: "about", label: "About", path: "/", accent: "sora" }
   - { key: "experience", label: "Experience", path: "/experience/", accent: "sora" }
   - { key: "travels", label: "Travels", path: "/travels/", accent: "sora" }

@@ -116,3 +116,104 @@ body[data-page="about"] .page-top h1 em{font-style:italic;color:var(--gold-light
 
 /* Keep navigation available when JavaScript is disabled. */
 @media(max-width:700px){.no-js .header{height:auto;min-height:82px;flex-wrap:wrap;gap:18px;padding:18px 0}.no-js .menu-toggle{display:none}.no-js .header nav{display:flex;position:static;width:100%;padding:0;border:0;background:none;flex-direction:row;flex-wrap:wrap;gap:8px 18px}.no-js .header nav>a{font-size:11px;padding:8px 0;gap:6px}.no-js .header nav>a.github-link{font-size:9px}}
+
+/* Minimal shared footer; contact links remain with the biography. */
+.footer{justify-content:center}.footer>p{margin:0;font-size:10px;letter-spacing:1px}
+
+/* Reading comfort: full-weight body copy, warm white and a quieter backdrop. */
+:root{--muted:#b9b7ad}
+body{font-size:16px;font-weight:400}
+body[data-page="about"] .about-bio{font-size:16px;font-weight:400;line-height:2;color:#eee9dd}
+.about-bio p{margin-bottom:22px}
+.page-intro{font-size:16px;line-height:1.95;color:#d0cdc2;letter-spacing:.4px}
+.timeline-body>.school-summary,.timeline-body .project-detail .project-description{font-size:16px;font-weight:400;line-height:2;color:#e4e0d5}
+.timeline-body>.degree{font-size:14px;line-height:1.9}
+.academic-project summary h3{font-weight:500}
+.academic-project summary .project-date{font-size:14px}
+.travel-record-list p{font-size:16px;font-weight:400;line-height:2;color:#e4e0d5}
+.travel-record-list h3{font-size:16px;font-weight:500}
+.atlas-places strong{font-size:15px;font-weight:500}
+.atlas-places span{font-size:14px;line-height:1.9;color:#d7d3c7}
+.atlas-location-note{font-size:14px;line-height:1.9;color:#cbc7bb}
+.atlas-toolbar button{font-size:14px}
+.header nav>a{font-size:14px;font-weight:400}
+.about-copy .text-link{font-size:15px;font-weight:400}
+body[data-page="about"] .about-landscape:after{background:linear-gradient(180deg,rgba(9,10,9,.48),rgba(9,10,9,.12) 40%,rgba(9,10,9,.35)),linear-gradient(90deg,rgba(9,10,9,.2),rgba(9,10,9,.73) 32%,rgba(9,10,9,.9) 65%,rgba(9,10,9,.4))}
+@media(max-width:700px){
+ body[data-page="about"] .about-bio,.timeline-body>.school-summary,.timeline-body .project-detail .project-description,.travel-record-list p{font-size:16px;line-height:2}
+ .page-intro{font-size:16px;line-height:1.95}
+ .atlas-toolbar button{font-size:13px;padding:9px 12px}
+ .atlas-places strong{font-size:15px}.atlas-places span{font-size:14px}
+ body[data-page="about"] .about-landscape:after{background:linear-gradient(180deg,rgba(9,10,9,.5),rgba(9,10,9,.83) 45%,rgba(9,10,9,.74))}
+}
+
+/* Two palettes, one collection: ink and gold / warm ivory and antique gold. */
+:root{color-scheme:dark}
+:root[data-theme="light"]{color-scheme:light;--bg:#f4f0e6;--panel:#fbf8f0;--ink:#302b24;--muted:#6a6255;--gold:#8a6629;--gold-light:#755321;--line:rgba(119,87,36,.22)}
+.header nav{margin-left:auto}
+.theme-toggle{display:inline-grid;place-items:center;flex-shrink:0;width:42px;height:42px;margin-left:28px;padding:10px;border:1px solid var(--line);border-radius:50%;color:var(--gold-light);background:transparent;cursor:pointer;transition:background .2s,border-color .2s}
+.theme-toggle[hidden]{display:none}
+.theme-toggle:hover{background:var(--panel);border-color:var(--gold)}
+.theme-toggle svg{width:20px;height:20px;display:block}
+.theme-toggle .theme-moon{display:none}
+[data-theme="light"] .theme-toggle .theme-moon{display:block}
+[data-theme="light"] .theme-toggle .theme-sun{display:none}
+[data-theme="light"] .page-intro{color:#625b50}
+[data-theme="light"] body[data-page="about"] .about-bio{color:#39342d}
+[data-theme="light"] .timeline-body>.school-summary,[data-theme="light"] .timeline-body .project-detail .project-description,[data-theme="light"] .travel-record-list p{color:#494238}
+[data-theme="light"] .atlas-places span,[data-theme="light"] .atlas-location-note{color:#62594c}
+[data-theme="light"] .signature-portrait.portrait-card{background:#eee7d8}
+[data-theme="light"] .portrait-autograph .signature{filter:brightness(.72) saturate(1.12)}
+[data-theme="light"] .about-bio a:hover{color:#4c340d}
+[data-theme="light"] .contact-links a:hover{color:#4c340d}
+[data-theme="light"] .ambient{opacity:.4}
+[data-theme="light"] body[data-page="about"] .about-landscape{background:var(--bg)}
+[data-theme="light"] body[data-page="about"] .about-landscape-art{opacity:.12;filter:blur(5px) saturate(.45);mix-blend-mode:multiply}
+[data-theme="light"] body[data-page="about"] .about-landscape:after{background:linear-gradient(90deg,rgba(244,240,230,.1),rgba(244,240,230,.72) 50%,rgba(244,240,230,.9) 75%)}
+[data-theme="light"] body[data-page="about"] .about-moon{opacity:.2;filter:blur(1px);box-shadow:0 0 50px rgba(163,122,47,.1)}
+[data-theme="light"] body[data-page="about"] .about-gold-dust{opacity:.14;mix-blend-mode:multiply}
+[data-theme="light"] .education-landmark{filter:brightness(.7) saturate(.8)}
+[data-theme="light"] body[data-page="experience"] .experience-rose-window{opacity:.13;filter:brightness(.65);mix-blend-mode:multiply}
+[data-theme="light"] body[data-page="travels"] .travel-star-chart{opacity:.2;mix-blend-mode:multiply}
+[data-theme="light"] body[data-page="travels"] .travel-star-chart:after{background:linear-gradient(180deg,transparent,rgba(244,240,230,.7))}
+[data-theme="light"] body[data-page="travels"] .atlas-layout,[data-theme="light"] body[data-page="travels"] .atlas-toolbar,[data-theme="light"] body[data-page="travels"] .travel-record-groups{background:rgba(244,240,230,.9)}
+[data-theme="light"] .atlas-ocean{fill:#ede9dd;stroke:#a0895f}
+[data-theme="light"] .atlas-land{fill:#dcded1;stroke:#969a86}
+[data-theme="light"] .atlas-land.is-visited{fill:url(#atlas-visited-gold);stroke:#92713a}
+[data-theme="light"] .atlas-land:hover,[data-theme="light"] .atlas-land:focus-visible{fill:#c2c5af;stroke:#65562d}
+[data-theme="light"] .atlas-land.is-visited:hover,[data-theme="light"] .atlas-land.is-selected{fill:#c49b4c;stroke:#6f531e}
+[data-theme="light"] .atlas-map-label text{fill:#60471e;stroke:#f4f0e6}
+[data-theme="light"] .atlas-legend i:nth-of-type(2){background:#dcded1;border-color:#969a86}
+[data-theme="light"] .atlas-map-controls button{background:#faf7ef}
+[data-theme="light"] .atlas-map-controls button:hover{background:#e9dfc8}
+[data-theme="light"] .atlas-loading{background:var(--bg)}
+[data-theme="light"] .atlas-places>div,[data-theme="light"] .academic-project,[data-theme="light"] .travel-record-list>div{border-color:var(--line)}
+@media(max-width:700px){
+ .header .brand{order:0}.header nav{order:3;margin-left:0}
+ .theme-toggle{order:1;margin-left:auto;margin-right:18px;width:38px;height:38px;padding:8px}
+ .header .menu-toggle{order:2}
+ [data-theme="light"] .header nav{background:#f8f4eb}
+ [data-theme="light"] body[data-page="about"] .about-landscape-art{opacity:.1}
+ [data-theme="light"] body[data-page="about"] .about-landscape:after{background:linear-gradient(180deg,rgba(244,240,230,.25),rgba(244,240,230,.88) 45%)}
+}
+@media(prefers-reduced-motion:reduce){.theme-toggle{transition:none}}
+
+/* Light chapters keep their own pigments rather than duplicating the dark palette. */
+[data-theme="light"] body[data-page="about"] .about-landscape-art{background-image:url('/assets/images/about-mineral-landscape-light-v1.png');opacity:.58;filter:blur(1.8px) saturate(.95);mix-blend-mode:normal}
+[data-theme="light"] body[data-page="about"] .about-landscape:after{background:linear-gradient(180deg,rgba(244,240,230,.22),rgba(244,240,230,.08) 45%,rgba(244,240,230,.16)),linear-gradient(90deg,rgba(244,240,230,.05),rgba(244,240,230,.18) 32%,rgba(244,240,230,.78) 60%,rgba(244,240,230,.72) 82%,rgba(244,240,230,.23))}
+body[data-page="experience"] .experience-rose-window{opacity:.26;filter:brightness(1.35);mask-image:radial-gradient(ellipse at 64% 30%,#000 12%,rgba(0,0,0,.85) 52%,transparent 83%)}
+[data-theme="light"] body[data-page="experience"] .experience-rose-window{background-image:url('/assets/images/experience-rose-window-glass-v1.png');opacity:.24;filter:saturate(1.1);mix-blend-mode:multiply}
+@media(max-width:1050px){body[data-page="experience"] .experience-rose-window{opacity:.21}[data-theme="light"] body[data-page="experience"] .experience-rose-window{opacity:.23}}
+@media(max-width:700px){
+ [data-theme="light"] body[data-page="about"] .about-landscape-art{opacity:.46;filter:blur(2px) saturate(.9);background-position:38% bottom}
+ [data-theme="light"] body[data-page="about"] .about-landscape:after{background:linear-gradient(180deg,rgba(244,240,230,.22),rgba(244,240,230,.58) 40%,rgba(244,240,230,.76) 65%,rgba(244,240,230,.48))}
+ body[data-page="experience"] .experience-rose-window{opacity:.18;filter:brightness(1.3)}
+ [data-theme="light"] body[data-page="experience"] .experience-rose-window{opacity:.2;filter:saturate(1.1)}
+}
+
+/* The light rose window casts color from the corner, leaving a quiet reading field. */
+[data-theme="light"] body[data-page="experience"] .experience-rose-window{inset:0;width:auto;height:100vh;aspect-ratio:auto;background:none;opacity:1;filter:none;mix-blend-mode:normal;mask-image:none;overflow:hidden}
+[data-theme="light"] body[data-page="experience"] .experience-rose-window:before{content:'';position:absolute;width:720px;aspect-ratio:1;right:-260px;top:-260px;background:url('/assets/images/experience-rose-window-glass-v1.png') center/contain no-repeat;opacity:.23;filter:blur(.8px) saturate(1.08);mix-blend-mode:multiply;mask-image:linear-gradient(180deg,#000 10%,rgba(0,0,0,.9) 48%,transparent 94%)}
+[data-theme="light"] body[data-page="experience"] .experience-rose-window:after{content:'';position:absolute;inset:0 0 8%;background:radial-gradient(ellipse at 98% 13%,rgba(69,111,190,.18),transparent 32%),radial-gradient(ellipse at 85% 36%,rgba(174,89,128,.13),transparent 28%),radial-gradient(ellipse at 98% 64%,rgba(205,159,69,.18),transparent 31%),radial-gradient(ellipse at 82% 73%,rgba(80,152,143,.09),transparent 25%);filter:blur(32px);mask-image:linear-gradient(90deg,transparent 48%,rgba(0,0,0,.3) 72%,#000);pointer-events:none}
+@media(max-width:1050px){[data-theme="light"] body[data-page="experience"] .experience-rose-window:before{width:640px;top:-245px;right:-280px;opacity:.2}}
+@media(max-width:700px){[data-theme="light"] body[data-page="experience"] .experience-rose-window:before{width:470px;top:-210px;right:-285px;opacity:.18}[data-theme="light"] body[data-page="experience"] .experience-rose-window:after{opacity:.7;filter:blur(25px);mask-image:linear-gradient(90deg,transparent 65%,#000)}}

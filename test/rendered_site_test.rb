@@ -33,13 +33,17 @@ class RenderedSiteTest < Minitest::Test
   end
   def test_home_uses_approved_identity_signature_and_navigation
     html = page("index.html")
-    assert_includes html, "Create Abundance <em>or die trying</em>"
+    assert_includes html, "我是王怡丹，也可以叫我 Eden"
+    refute_includes html, 'class="hero"'
+    refute_includes html, 'class="experience-preview section"'
+    refute_includes html, 'class="travel-preview section"'
     assert_includes html, '<span class="brand-emblem">W<span>'
     assert_includes html, "signature-original.png"
-    %w[/about/ /experience/ /travels/].each { |path| assert_includes html, "href=\"#{path}\"" }
+    %w[/ /experience/ /travels/].each { |path| assert_includes html, "href=\"#{path}\"" }
     assert_includes html, 'lang="zh-CN"'
     refute_includes html, "A small corner of my world."
-    refute_includes html, "theme-toggle"
+    assert_includes html, 'class="theme-toggle"'
+    assert_includes html, 'aria-label="切换到浅色模式"'
   end
   def test_navigation_supports_javascript_and_no_javascript
     html = page("index.html")
@@ -52,7 +56,7 @@ class RenderedSiteTest < Minitest::Test
     assert_includes script, "event.key === 'Escape'"
   end
   def test_about_contains_biography_safe_advisor_links_and_contacts
-    html = page("about/index.html")
+    html = page("index.html")
     assert_includes html, "我是王怡丹，也可以叫我 Eden"
     assert_includes html, "我总会想起八月的伦敦。"
     assert_includes html, "循此苦旅"
@@ -93,7 +97,7 @@ class RenderedSiteTest < Minitest::Test
     refute_includes html, "/api"
   end
   def test_assets_exist_and_private_development_files_are_not_published
-    required = %w[assets/css/blackgold.css assets/js/blackgold.js assets/js/travel-atlas.js assets/vendor/d3.min.js assets/vendor/d3.LICENSE assets/data/atlas-world.geojson assets/data/china-provinces.geojson assets/data/travel-footprints.json assets/images/signature-original.png assets/images/yidan-portrait-blackgold-v1.png assets/images/about-gilded-landscape-v1.png assets/images/big-ben-gold-line.svg assets/images/canton-tower-gold-line.svg assets/images/experience-rose-window.svg assets/images/travel-gilded-star-chart.svg]
+    required = %w[assets/css/blackgold.css assets/js/blackgold.js assets/js/travel-atlas.js assets/vendor/d3.min.js assets/vendor/d3.LICENSE assets/data/atlas-world.geojson assets/data/china-provinces.geojson assets/data/travel-footprints.json assets/images/signature-original.png assets/images/yidan-portrait-blackgold-v1.png assets/images/about-gilded-landscape-v1.png assets/images/big-ben-gold-line.svg assets/images/canton-tower-gold-line.svg assets/images/experience-rose-window.svg assets/images/experience-rose-window-glass-v1.png assets/images/about-mineral-landscape-light-v1.png assets/images/travel-gilded-star-chart.svg]
     required.each { |path| assert_includes generated_artifacts, path }
     generated_artifacts.each do |path|
       refute_match(%r{\A(?:docs/|functions/|test/|sample_data/|_scripts/|vendor/|\.git/)}, path)
@@ -108,6 +112,11 @@ class RenderedSiteTest < Minitest::Test
     ignored, stderr, status = Open3.capture3("git", "check-ignore", "--no-index", "--stdin", stdin_data: scripts.join("\n") + "\n", chdir: ROOT)
     assert_includes [0, 1], status.exitstatus, stderr
     assert_empty ignored, "Public scripts must be included in the release: #{ignored}"
+  end
+  def test_previous_about_url_returns_to_the_about_landing_page
+    html = page("about/index.html")
+    assert_includes html, '<meta http-equiv="refresh" content="0;url=/">'
+    assert_includes html, '<a href="/">'
   end
   def test_png_favicon_and_absence_of_rss_are_preserved
     html = page("index.html")

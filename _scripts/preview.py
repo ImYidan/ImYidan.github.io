@@ -1,4 +1,4 @@
-"""Generate a dependency-free preview of the four gold-layout HTML pages."""
+"""Generate a dependency-free preview of the gold-layout HTML pages."""
 from pathlib import Path
 import argparse, re, shutil
 parser = argparse.ArgumentParser()
@@ -13,7 +13,7 @@ for folder in ('home', 'about', 'experience', 'travels'):
     values = dict(re.findall(r'^([a-z_]+):\s*(.*?)\s*$', frontmatter, re.M))
     target = output / values['permalink'].strip('/') / 'index.html'
     target.parent.mkdir(parents=True, exist_ok=True)
-    html = layout.replace('{{ content }}', body)
+    html = body if values.get('layout') == 'null' else layout.replace('{{ content }}', body)
     for key, value in values.items():
         html = html.replace('{{ page.' + key + ' }}', value)
     target.write_text(html)
