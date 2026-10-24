@@ -217,3 +217,57 @@ body[data-page="experience"] .experience-rose-window{opacity:.26;filter:brightne
 [data-theme="light"] body[data-page="experience"] .experience-rose-window:after{content:'';position:absolute;inset:0 0 8%;background:radial-gradient(ellipse at 98% 13%,rgba(69,111,190,.18),transparent 32%),radial-gradient(ellipse at 85% 36%,rgba(174,89,128,.13),transparent 28%),radial-gradient(ellipse at 98% 64%,rgba(205,159,69,.18),transparent 31%),radial-gradient(ellipse at 82% 73%,rgba(80,152,143,.09),transparent 25%);filter:blur(32px);mask-image:linear-gradient(90deg,transparent 48%,rgba(0,0,0,.3) 72%,#000);pointer-events:none}
 @media(max-width:1050px){[data-theme="light"] body[data-page="experience"] .experience-rose-window:before{width:640px;top:-245px;right:-280px;opacity:.2}}
 @media(max-width:700px){[data-theme="light"] body[data-page="experience"] .experience-rose-window:before{width:470px;top:-210px;right:-285px;opacity:.18}[data-theme="light"] body[data-page="experience"] .experience-rose-window:after{opacity:.7;filter:blur(25px);mask-image:linear-gradient(90deg,transparent 65%,#000)}}
+
+/* A small, sheltered rose, only inside the light travel chapter's opening frame. */
+.travel-rose{display:none}
+.travel-top{position:relative}
+[data-theme="light"] body[data-page="travels"] .travel-star-chart{display:none}
+[data-theme="light"] .travel-top{overflow:hidden;isolation:isolate}
+[data-theme="light"] .travel-top .travel-hero-copy{position:relative;z-index:1;padding-right:190px}
+[data-theme="light"] .travel-rose{display:block;position:absolute;pointer-events:none;right:0;top:50%;width:180px;transform:translateY(-47%);z-index:0}
+.travel-rose svg{display:block;width:100%;height:auto;overflow:visible}
+.rose-flower{transform-origin:120px 268px;animation:rose-sway 7s ease-in-out infinite}
+.rose-star{transform-box:fill-box;transform-origin:center;animation:rose-starlight 5s ease-in-out infinite}
+.rose-star.two{animation-delay:-1.8s}.rose-star.three{animation-delay:-3.3s}
+@keyframes rose-sway{0%,100%{transform:rotate(-1.4deg)}50%{transform:rotate(1.4deg)}}
+@keyframes rose-starlight{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:.85;transform:scale(1.05)}}
+@media(min-width:1500px){[data-theme="light"] .travel-top .travel-hero-copy{padding-right:220px}[data-theme="light"] .travel-rose{width:200px;right:10px}}
+@media(max-width:1050px){[data-theme="light"] .travel-top .travel-hero-copy{padding-right:150px}[data-theme="light"] .travel-rose{width:145px}}
+@media(max-width:700px){[data-theme="light"] .travel-top .travel-hero-copy{padding-right:90px}[data-theme="light"] .travel-rose{width:105px;right:-10px;top:49%}[data-theme="light"] .travel-top .page-intro{font-size:15px;line-height:1.9}}
+@media(prefers-reduced-motion:reduce){.rose-flower,.rose-star{animation:none!important}.rose-star{opacity:.6}}
+@media(max-width:700px){
+ [data-theme="light"] .travel-top .travel-hero-copy{padding-right:0}
+ [data-theme="light"] .travel-top h1{font-size:clamp(27px,7.8vw,34px);line-height:1.65}
+ [data-theme="light"] .travel-title-first,[data-theme="light"] .travel-top h1 em{display:block;white-space:nowrap}
+ [data-theme="light"] .travel-top .page-intro{max-width:calc(100% - 95px)}
+ [data-theme="light"] .travel-rose{width:95px;right:-3px;top:auto;bottom:32px;transform:none}
+}
+
+/* A quiet portrait gallery: the paintings carry the colour. */
+body[data-page="pets"] .pets-top{padding-bottom:36px}
+body[data-page="pets"] .pets-top h1 em{font-style:italic;color:var(--gold-light)}
+.pet-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(35px,6vw,90px);max-width:1000px;padding-top:10px;padding-bottom:90px}
+.pet-portrait{margin:0;min-width:0}
+.pet-frame{padding:9px;background:linear-gradient(135deg,#b99a62,#493921 24%,#9d7a43 49%,#3c301e 76%,#c5a36b);box-shadow:0 15px 45px #0005,0 0 0 1px #ad8c5540}
+.pet-frame img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:contain;background:#302b1e;box-shadow:0 0 0 1px #17140d,0 0 0 3px #715633}
+.pet-portrait figcaption{text-align:center;color:var(--ink);font-family:"Noto Serif SC",serif;font-size:19px;letter-spacing:.15em;margin-top:26px;line-height:1.7}
+[data-theme="light"] .pet-frame{box-shadow:0 12px 35px #694c2825,0 0 0 1px #aa865650}
+@media(max-width:700px){body[data-page="pets"] .pets-top{padding-bottom:24px}.pet-gallery{grid-template-columns:1fr;gap:45px;max-width:420px;padding-top:8px;padding-bottom:55px}.pet-frame{padding:7px}.pet-portrait figcaption{font-size:18px;margin-top:20px}}
+
+.pet-portrait figcaption span{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:23px;letter-spacing:.04em;color:var(--gold-light);margin-left:10px}
+
+/* One Vatican vista changes from sunset to night with the gallery theme. */
+body[data-page="pets"]{isolation:isolate}
+.pet-gallery-backdrop{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none;background:#090c12}
+.pet-backdrop-day,.pet-backdrop-night{position:absolute;inset:-5px;background-position:right center;background-size:cover;background-repeat:no-repeat;filter:blur(1.6px);transition:opacity .7s ease}
+.pet-backdrop-day{background-image:url('/assets/images/pets/vatican-sunset-oil-v1.png');opacity:0}
+.pet-backdrop-night{background-image:url('/assets/images/pets/vatican-night-oil-v1.png');opacity:.7}
+.pet-gallery-backdrop:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(9,10,9,.92),rgba(9,10,9,.62) 45%,rgba(9,10,9,.18)),linear-gradient(180deg,rgba(9,10,9,.18),transparent 38%,rgba(9,10,9,.7));pointer-events:none}
+[data-theme="light"] .pet-gallery-backdrop{background:#f4f0e6}
+[data-theme="light"] .pet-backdrop-day{opacity:.75}
+[data-theme="light"] .pet-backdrop-night{opacity:0}
+[data-theme="light"] .pet-gallery-backdrop:after{background:linear-gradient(90deg,rgba(244,240,230,.96),rgba(244,240,230,.72) 46%,rgba(244,240,230,.28)),linear-gradient(180deg,rgba(244,240,230,.12),transparent 38%,rgba(244,240,230,.82))}
+body[data-page="pets"] .pet-portrait figcaption{position:relative;isolation:isolate}
+body[data-page="pets"] .pet-portrait figcaption:before{content:"";position:absolute;inset:-12px -15px;z-index:-1;background:var(--bg);opacity:.75;filter:blur(12px)}
+@media(max-width:700px){.pet-backdrop-day,.pet-backdrop-night{background-position:82% top;background-size:auto 100%;filter:blur(2px)}.pet-backdrop-night{opacity:.48}[data-theme="light"] .pet-backdrop-day{opacity:.55}}
+@media(prefers-reduced-motion:reduce){.pet-backdrop-day,.pet-backdrop-night{transition:none}}

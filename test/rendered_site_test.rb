@@ -29,7 +29,7 @@ class RenderedSiteTest < Minitest::Test
     routes = Dir.glob(File.join(DESTINATION, "**", "*.html")).map do |path|
       "/#{path.delete_prefix("#{DESTINATION}/").sub(%r{index\.html\z}, "")}"
     end.sort
-    assert_equal %w[/ /about/ /experience/ /travels/], routes
+    assert_equal %w[/ /about/ /experience/ /pets/ /travels/], routes
   end
   def test_home_uses_approved_identity_signature_and_navigation
     html = page("index.html")
@@ -39,7 +39,7 @@ class RenderedSiteTest < Minitest::Test
     refute_includes html, 'class="travel-preview section"'
     assert_includes html, '<span class="brand-emblem">W<span>'
     assert_includes html, "signature-original.png"
-    %w[/ /experience/ /travels/].each { |path| assert_includes html, "href=\"#{path}\"" }
+    %w[/ /experience/ /travels/ /pets/].each { |path| assert_includes html, "href=\"#{path}\"" }
     assert_includes html, 'lang="zh-CN"'
     refute_includes html, "A small corner of my world."
     assert_includes html, 'class="theme-toggle"'
@@ -97,7 +97,7 @@ class RenderedSiteTest < Minitest::Test
     refute_includes html, "/api"
   end
   def test_assets_exist_and_private_development_files_are_not_published
-    required = %w[assets/css/blackgold.css assets/js/blackgold.js assets/js/travel-atlas.js assets/vendor/d3.min.js assets/vendor/d3.LICENSE assets/data/atlas-world.geojson assets/data/china-provinces.geojson assets/data/travel-footprints.json assets/images/signature-original.png assets/images/yidan-portrait-blackgold-v1.png assets/images/about-gilded-landscape-v1.png assets/images/big-ben-gold-line.svg assets/images/canton-tower-gold-line.svg assets/images/experience-rose-window.svg assets/images/experience-rose-window-glass-v1.png assets/images/about-mineral-landscape-light-v1.png assets/images/travel-gilded-star-chart.svg]
+    required = %w[assets/css/blackgold.css assets/js/blackgold.js assets/js/travel-atlas.js assets/vendor/d3.min.js assets/vendor/d3.LICENSE assets/data/atlas-world.geojson assets/data/china-provinces.geojson assets/data/travel-footprints.json assets/images/signature-original.png assets/images/yidan-portrait-blackgold-v1.png assets/images/about-gilded-landscape-v1.png assets/images/big-ben-gold-line.svg assets/images/canton-tower-gold-line.svg assets/images/experience-rose-window.svg assets/images/experience-rose-window-glass-v1.png assets/images/travel-rose-watercolor.png assets/images/about-mineral-landscape-light-v1.png assets/images/travel-gilded-star-chart.svg]
     required.each { |path| assert_includes generated_artifacts, path }
     generated_artifacts.each do |path|
       refute_match(%r{\A(?:docs/|functions/|test/|sample_data/|_scripts/|vendor/|\.git/)}, path)
@@ -106,7 +106,7 @@ class RenderedSiteTest < Minitest::Test
   end
   def test_public_script_dependencies_are_not_excluded_from_git
     skip "Source archive has no Git checkout" unless File.directory?(File.join(ROOT, ".git"))
-    scripts = %w[index.html about/index.html experience/index.html travels/index.html].flat_map do |path|
+    scripts = %w[index.html about/index.html experience/index.html travels/index.html pets/index.html].flat_map do |path|
       page(path).scan(/<script[^>]+src="(\/assets\/[^"?]+)(?:\?[^" ]*)?"/).flatten
     end.uniq.map { |path| path.delete_prefix("/") }
     ignored, stderr, status = Open3.capture3("git", "check-ignore", "--no-index", "--stdin", stdin_data: scripts.join("\n") + "\n", chdir: ROOT)

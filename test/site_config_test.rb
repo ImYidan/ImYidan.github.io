@@ -13,7 +13,7 @@ class SiteConfigTest < Minitest::Test
   end
 
   def test_first_release_navigation
-    assert_equal %w[about experience travels], CONFIG.fetch("nav").map { |item| item.fetch("key") }
+    assert_equal %w[about experience travels pets], CONFIG.fetch("nav").map { |item| item.fetch("key") }
     assert CONFIG.fetch("nav").all? { |item| item.fetch("accent") == "sora" }
   end
 

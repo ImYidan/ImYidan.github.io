@@ -158,3 +158,4 @@ nav:
   - { key: "about", label: "About", path: "/", accent: "sora" }
   - { key: "experience", label: "Experience", path: "/experience/", accent: "sora" }
   - { key: "travels", label: "Travels", path: "/travels/", accent: "sora" }
+  - { key: "pets", label: "宠物", path: "/pets/", accent: "sora" }

@@ -7,7 +7,7 @@ args = parser.parse_args()
 root = Path(__file__).resolve().parent.parent
 output = (root / args.output).resolve()
 layout = (root / '_layouts/gold.html').read_text()
-for folder in ('home', 'about', 'experience', 'travels'):
+for folder in ('home', 'about', 'experience', 'travels', 'pets'):
     page = root / 'pages' / folder / 'index.html'
     frontmatter, body = page.read_text().split('---', 2)[1:]
     values = dict(re.findall(r'^([a-z_]+):\s*(.*?)\s*$', frontmatter, re.M))
